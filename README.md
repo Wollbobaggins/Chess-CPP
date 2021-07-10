@@ -7,11 +7,11 @@
 Some ideas are suggested below. You won't be able to do all of these things in the time provided — that's OK — do what you can! 
 
 ### Piece function ideas
-	- [ ] how many legal moves does it have
-	- [ ] how many pieces can it capture
-	- [ ] is it pinned
-	- [ ] is it hanging
-	- [ ] how many legal moves are there for all the pieces it can capture
+- [ ] how many legal moves does it have
+- [ ] how many pieces can it capture
+- [ ] is it pinned
+- [ ] is it hanging
+- [ ] how many legal moves are there for all the pieces it can capture
 
 ### Position function ideas
 - [ ] get a vector of the best N moves from the position (using an engine)
