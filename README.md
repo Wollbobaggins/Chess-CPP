@@ -1,8 +1,8 @@
 # Requirements
 
 ## Piece function ideas
-[_] how many legal moves does it have
-** how many pieces can it capture
+[x] how many legal moves does it have
+[] how many pieces can it capture
 ** is it pinned
 ** is it hanging
 ** how many legal moves are there for all the pieces it can capture
