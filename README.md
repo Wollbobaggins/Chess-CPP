@@ -1,17 +1,17 @@
 ## Objective
 
-In C++, (or another language if necessary) make objects with functions that provide the kind of information that Chess players care about. You will probably be able to do a lot more if you use open-source code to accelerate your work, such as  https://github.com/official-stockfish/Stockfish or https://github.com/AndyGrant/Ethereal.  If you're already familiar with them, all the better!
+<strong>In C++, (or another language if necessary) make objects with functions that provide the kind of information that Chess players care about. You will probably be able to do a lot more if you use open-source code to accelerate your work, such as  https://github.com/official-stockfish/Stockfish or https://github.com/AndyGrant/Ethereal.  If you're already familiar with them, all the better!</strong>
 
 ## Requirements
 
 Some ideas are suggested below. You won't be able to do all of these things in the time provided — that's OK — do what you can! 
 
 ### Piece function ideas
-- [ ] how many legal moves does it have
-- [ ] how many pieces can it capture
-- [ ] is it pinned
-- [ ] is it hanging
-- [ ] how many legal moves are there for all the pieces it can capture
+	- [ ] how many legal moves does it have
+	- [ ] how many pieces can it capture
+	- [ ] is it pinned
+	- [ ] is it hanging
+	- [ ] how many legal moves are there for all the pieces it can capture
 
 ### Position function ideas
 - [ ] get a vector of the best N moves from the position (using an engine)
