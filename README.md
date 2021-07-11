@@ -36,6 +36,8 @@ This repository mostly consists of Stockfish source code, which can be found her
 	
 To run the test, compile the program into an executable and run it from the command line. Here, the program will execute identically to how Stockfish runs with the only addition that the command <strong>test -arg -arg</strong> can also be executed. For the <strong>test -arg -arg</strong> help menu, simply type <strong>test</strong>. Below are some examples.
 
+#### Help Menu
+```test```
 #### Piece Function Ideas 
 ```test piece e4```
 #### Position Function Ideas 
