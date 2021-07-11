@@ -36,9 +36,9 @@ void Test::log_help()
 {
 	cout << "here is a list of availble commands for test:" << endl;
 
-	cout << "\ttest piece (arg) - a single square" << endl;
-	cout << "\ttest position" << endl;
-	cout << "\ttest move (arg) - a move" << endl;
+	cout << "\ttest piece -arg : a square in FILE/RANK form" << endl;
+	cout << "\ttest position -arg : number of moves to display" << endl;
+	cout << "\ttest move -arg : a move in FILE/RANK/FILE/RANK form" << endl;
 }
 
 #pragma endregion

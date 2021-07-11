@@ -24,3 +24,20 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [ ] does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
 - [ ] does this move *permit* the opponent to play a good move?
 - [ ] does this move *permit* the opponent to play a good move, by undefending a specific square?
+
+## Execution
+
+This repository mostly consists of Stockfish source code, which can be found here: https://github.com/official-stockfish/Stockfish. The only files that were edtited/created outside of this repository are the following:
+	- uci.cpp : added command <strong>test -arg -arg</strong>, which logs some of the test requirements above
+	- test.h
+	- test.cpp
+	
+To run the test, compile the program into an executable and run it from the command line. Here, the program will execute identical to how Stockfish runs with the only addition that the command <strong>test -arg -arg</strong> can also be executed. For the <strong>test -arg -arg</strong> help menu, simply type <strong>test</strong>. Below are some examples.
+	- Position function ideas 
+	- Position function ideas 
+	- Position function ideas 
+	
+## Evaluation
+
+Honestly, this technical test was pretty rough for me. While I felt that the listed requirements/challenges were not that challenging, understanding the framework that I attempted to complete the test in was very difficult. 
+
