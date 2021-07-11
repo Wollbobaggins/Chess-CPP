@@ -7,7 +7,7 @@
 Some ideas are suggested below. You won't be able to do all of these things in the time provided — that's OK — do what you can! 
 
 ### Piece function ideas
-- [ ] how many legal moves does it have
+- [x] how many legal moves does it have
 - [ ] how many pieces can it capture
 - [ ] is it pinned
 - [ ] is it hanging

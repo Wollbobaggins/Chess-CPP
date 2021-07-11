@@ -235,6 +235,7 @@ void UCI::loop(int argc, char* argv[]) {
   Position pos;
   string token, cmd;
   StateListPtr states(new std::deque<StateInfo>(1));
+  Test test;
 
   pos.set(StartFEN, false, &states->back(), Threads.main());
 
@@ -287,7 +288,7 @@ void UCI::loop(int argc, char* argv[]) {
               filename = f;
           Eval::NNUE::save_eval(filename);
       }
-      else if (token == "test")     Test test(pos, is, states);
+      else if (token == "test")     test.run(pos, is, states);
       else if (!token.empty() && token[0] != '#')
           sync_cout << "Unknown command: " << cmd << sync_endl;
 
