@@ -29,25 +29,28 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 
 This repository mostly consists of Stockfish source code, which can be found here: https://github.com/official-stockfish/Stockfish. The only files that were edited/created outside of this repository are the following:
 ```
-- uci.cpp : added command <strong>test -arg -arg</strong>, which logs some of the test requirements above
-- test.h
-- test.cpp
+- uci.cpp 	: edited, added command <strong>test -arg -arg</strong>, which logs some of the test requirements above
+- test.h 	: added file
+- test.cpp	: added file
 ```
 	
-To run the test, compile the program into an executable and run it from the command line. Here, the program will execute identical to how Stockfish runs with the only addition that the command <strong>test -arg -arg</strong> can also be executed. For the <strong>test -arg -arg</strong> help menu, simply type <strong>test</strong>. Below are some examples.
+To run the test, compile the program into an executable and run it from the command line. Here, the program will execute identically to how Stockfish runs with the only addition that the command <strong>test -arg -arg</strong> can also be executed. For the <strong>test -arg -arg</strong> help menu, simply type <strong>test</strong>. Below are some examples.
 ```
-- Position function ideas 
-- Position function ideas 
-- Position function ideas 
+- Piece Function Ideas 
+	test piece e4
+- Position Function Ideas 
+	test position 10
+- Position Function Ideas 
+	test move e2e4
 ```
 	
 ## Evaluation
 
 #### Number of Objectives Achieved: 4 / 13
 
-This technical test was pretty rough for me. While <strong>I felt that the listed requirements/objectives were not that challenging</strong>, understanding the framework was very difficult. Before this examination, <strong>I had never worked with UCI protocols or any chess engine</strong> other than my own (which was not UCI compliant) as a result, the vast <strong>majority of time bottlenecks arose from reading and comprehending the API and source code</strong> for both chess engine and GUI. And wow! I could not find any sort of documentation explaining the code behind Stockfish other than the comments that were provided directly in the source!
+To be frank, this technical test was pretty rough for me. While <strong>I felt that the listed requirements/objectives were not that challenging</strong>, understanding the framework was very difficult. Before this examination, <strong>I had never worked with UCI protocols or any chess engine</strong> other than my own (which was not UCI compliant); as a result, the vast <strong>majority of time bottlenecks arose from reading and comprehending the API and source code</strong> for both chess engine and GUI. And wow! I could not find any sort of documentation explaining the code behind Stockfish other than the comments that were provided directly in the source!
 
-Overall, I believe that a 4 / 13 score is abysmal at best. However, I truly believe that had I previously been familiar with the source materials, I would have achieved a far higher score. Please take this into consideration.
+Overall, a score of 4 / 13 is not ideal. However, I truly believe that had I previously been familiar with the source materials, I would have achieved a far higher score. Please take this into consideration.
 
 ## Final Notes
 
