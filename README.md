@@ -27,7 +27,7 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 
 ## Execution
 
-This repository mostly consists of Stockfish source code, which can be found here: https://github.com/official-stockfish/Stockfish. The only files that were edtited/created outside of this repository are the following:
+This repository mostly consists of Stockfish source code, which can be found here: https://github.com/official-stockfish/Stockfish. The only files that were edited/created outside of this repository are the following:
 		- uci.cpp : added command <strong>test -arg -arg</strong>, which logs some of the test requirements above
 		- test.h
 		- test.cpp
@@ -39,5 +39,12 @@ To run the test, compile the program into an executable and run it from the comm
 	
 ## Evaluation
 
-Honestly, this technical test was pretty rough for me. While I felt that the listed requirements/objectives were not that challenging, understanding the framework that I attempted to complete the test in was very difficult. Previously before this examination, I had never worked with UCI protocols or any chess engine other than my own (which was not UCI compliant) as a result, the vast majority of time bottlenecks were a result of reading and comprehending the API for both chess engine and GUI. And wow! I could not find any sort of documentation explaining the code behind Stockfish other than the comments that were provided directly in the source!
+#### Number of Objectives Achieved: 4 / 13
 
+Honestly, this technical test was pretty rough for me. While <strong>I felt that the listed requirements/objectives were not that challenging</strong>, understanding the framework that I attempted to complete the test in was very difficult. Previously before this examination, <strong>I had never worked with UCI protocols or any chess engine</strong> other than my own (which was not UCI compliant) as a result, the vast <strong>majority of time bottlenecks were a result of reading and comprehending the API and source code</strong> for both chess engine and GUI. And wow! I could not find any sort of documentation explaining the code behind Stockfish other than the comments that were provided directly in the source!
+
+Overall, I believe that a 4 / 13 score is abysmal at best. However, I truly believe that had I previously been familiar with the source materials, I would have achieved a far higher score. Please take this into consideration.
+
+## Final Notes
+
+Thank you so much for the opportunity  and chance to work with Chess.com. This was incredibly exciting for me as the prospect of working with my favorite company and my favorite pastime was just awesome. I definitely feel much more prepared to work with chess engines in the future!
