@@ -8,9 +8,9 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 
 ### Piece function ideas
 - [x] how many legal moves does it have
-- [ ] how many pieces can it capture
-- [ ] is it pinned
-- [ ] is it hanging
+- [x] how many pieces can it capture
+- [x] is it pinned
+- [x] is it hanging
 - [ ] how many legal moves are there for all the pieces it can capture
 
 ### Position function ideas
@@ -24,6 +24,3 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [ ] does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
 - [ ] does this move *permit* the opponent to play a good move?
 - [ ] does this move *permit* the opponent to play a good move, by undefending a specific square?
-
-### Additional ideas
-- [ ] pending requirements...
