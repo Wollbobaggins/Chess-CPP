@@ -40,8 +40,8 @@ private:
 	// piece functions
 	void run_piece_function_ideas();
 	bool is_piece_token_valid();
-	template<GenType Type>
-	void log_piece_moves(MoveList<Type>& list);
+	void log_piece_legal_moves();
+	void log_piece_captures();
 	void log_piece_is_pinned();
 	void log_piece_is_hanging();
 	void log_legal_moves_for_capturable_pieces();

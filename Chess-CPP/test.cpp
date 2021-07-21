@@ -54,17 +54,21 @@ void Test::run_piece_function_ideas()
 
 	if (!is_piece_token_valid()) return;
 
-	MoveList legal_moves = MoveList<LEGAL>(*pos);
-	log_piece_moves(legal_moves);
+	// Piece Function Idea 1
+	log_piece_legal_moves(); 
 
-	MoveList capture_moves = MoveList<CAPTURES>(*pos);
-	log_piece_moves(capture_moves);
+	// Piece Function Idea 2
+	log_piece_captures(); 
 
-	log_piece_is_pinned();
-	log_piece_is_hanging();
+	// Piece Function Idea 3
+	log_piece_is_pinned(); 
 
-	log_legal_moves_for_capturable_pieces();
-}
+	// Piece Function Idea 4
+	log_piece_is_hanging(); 
+
+	// Piece Function Idea 5
+	log_legal_moves_for_capturable_pieces(); 
+} 
 
 bool Test::is_piece_token_valid()
 {
@@ -85,40 +89,73 @@ bool Test::is_piece_token_valid()
 	return true;
 }
 
-template<GenType Type>
-void Test::log_piece_moves(MoveList<Type>& list)
+void Test::log_piece_legal_moves()
 {
 	if (is_checkmate(pos))
 	{
-		cout << "no legal moves, checkmate" << endl;
+		cout << "no legal moves, it is checkmate" << endl;
+		return;
+	}
+	//TODO: the code above and below has been copied 3 times in 3 different functions
+	Square square = string_to_square(token);
+	Piece piece = get_piece_on_square(pos, square);
+	Color piece_color = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
+
+	if (pos->side_to_move() != piece_color)
+	{
+		cout << "piece cannot move, it is not this color's turn yet" << endl;
+		return;
+	}
+
+	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	int legal_move_count = 0;
+
+	for (ExtMove m : legal_moves)
+	{
+		if (from_sq(m) == square) legal_move_count++;
+	}
+
+	cout << "piece on " << token << " has " << legal_move_count << " legal moves:" << endl;
+
+	for (ExtMove m : legal_moves)
+	{
+		if (from_sq(m) == square) cout << "\t" << move_to_string(m) << endl;
+	}
+}
+
+void Test::log_piece_captures()
+{
+	if (is_checkmate(pos))
+	{
+		cout << "no legal captures, it is checkmate" << endl;
 		return;
 	}
 
 	Square square = string_to_square(token);
 	Piece piece = get_piece_on_square(pos, square);
 	Color piece_color = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
-	
+
 	if (pos->side_to_move() != piece_color)
 	{
-		cout << "piece cannot ";
-		cout << ((Type == LEGAL) ? "move" : "capture");
-		cout << ", it is not this color's turn yet" << endl;
+		cout << "piece cannot capture, it is not this color's turn yet" << endl;
 		return;
 	}
 
-	int legal_move_count = 0;
+	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	MoveList captures = MoveList<CAPTURES>(*pos);
+	int capture_count = 0;
 
-	for (ExtMove m : list)
+	for (ExtMove m : captures)
 	{
-		if (from_sq(m) == square) legal_move_count++;
+		if (from_sq(m) == square && legal_moves.contains(m)) capture_count++;
 	}
 
-	cout << "piece on " << token << " has " << legal_move_count;
-	cout << ((Type == LEGAL) ? " legal moves:" : " captures:") << endl;
+	cout << "piece on " << token << " has " << capture_count << " captures:" << endl;
 
-	for (ExtMove m : list)
+	for (ExtMove m : captures)
 	{
-		if (from_sq(m) == square) cout << "\t" << move_to_string(m) << endl;
+		if (from_sq(m) == square && legal_moves.contains(m))
+			cout << "\t" << move_to_string(m) << endl;
 	}
 }
 
@@ -157,17 +194,41 @@ void Test::log_piece_is_hanging()
 
 void Test::log_legal_moves_for_capturable_pieces()
 {
-	// get capture moves for piece
-	// if (has captures)
-		// change who's turn it is of fen/position
-		// foreach capturable piece
-			// get legal moves
+	if (is_checkmate(pos))
+	{
+		cout << "no legal moves for capturable pieces, it is checkmate" << endl;
+		return;
+	}
 
-	//debug_log_bitboard(pos->checkers());
-	//debug_log_bitboard(pos->blockers_for_king(~pos->side_to_move()));
+	Square square = string_to_square(token);
+	Piece piece = get_piece_on_square(pos, square);
+	Color piece_color = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
 
-	//MoveList legal_moves = MoveList<LEGAL>(*pos);
-	//log_piece_moves(legal_moves);
+	if (pos->side_to_move() != piece_color)
+	{
+		cout << "piece cannot capture, it is not this color's turn yet" << endl;
+		return;
+	}
+
+	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	MoveList captures = MoveList<CAPTURES>(*pos);
+
+	// Change who's move it is
+	string current_fen = pos->fen();
+	string fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
+	//set_position(pos, states, fen);
+	cout << current_fen << endl;
+
+	//for (ExtMove m : captures)
+	//{
+	//	if (from_sq(m) == square && legal_moves.contains(m))
+	//	{
+	//		token = square_to_string(to_sq(m));
+	//		log_piece_legal_moves();
+	//	}
+	//}
+
+	// Change back to original move
 }
 
 #pragma endregion

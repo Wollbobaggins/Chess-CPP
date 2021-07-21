@@ -69,6 +69,18 @@ namespace Utilities
 		return !legal_moves.size();
 	}
 
+	void set_side_to_move(Position* pos, StateListPtr* states, Color color)
+	{
+
+	}
+
+	void set_position(Position* pos, StateListPtr* states, string& fen)
+	{
+		// code copied from UCI::position(Position& pos, istringstream& is, StateListPtr& states)
+		*states = StateListPtr(new std::deque<StateInfo>(1)); // Drop old and create a new one
+		pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
+	}
+
 #pragma endregion
 
 #pragma region Debug Functions
