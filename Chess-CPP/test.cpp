@@ -1,4 +1,7 @@
 #include "test.h"
+#include "utilities.h"
+
+using namespace Utilities;
 
 #pragma region Foundational Code
 
@@ -48,56 +51,84 @@ void Test::log_help()
 void Test::run_piece_function_ideas()
 {
 	read_next_token(); 
-	//if (token is not valid) return; // HACK: assumes token is valid
 
-	log_piece_legal_moves();
-	log_piece_available_captures();
+	if (!is_piece_token_valid()) return;
+
+	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	log_piece_moves(legal_moves);
+
+	MoveList capture_moves = MoveList<CAPTURES>(*pos);
+	log_piece_moves(capture_moves);
+
 	log_piece_is_pinned();
 	log_piece_is_hanging();
+
+	log_legal_moves_for_capturable_pieces();
 }
 
-void Test::log_piece_legal_moves()
+bool Test::is_piece_token_valid()
 {
-	// HACK: only works for the piece color that is about to move
-	MoveList list = MoveList<LEGAL>(*pos); 
-	int legal_move_count = 0;
+	Square square = string_to_square(token);
 
-	// HACK: rough around the edges, but if program had a compatible GUI or general chess program, 
-	// this would obviously be optimized rather than using string comparisons for getting moves
-	for (ExtMove m : list)
+	if (square == SQ_NONE)
 	{
-		if (UCI::square(from_sq(m)) == token)  legal_move_count++;
+		cout << token << " is not a valid square" << endl;
+		return false;
 	}
 
-	cout << "piece on " << token << " has " << legal_move_count << " legal moves:" << endl;
-	for (ExtMove m : list) log_move_if_valid(m);
+	if (get_piece_on_square(pos, square) == NO_PIECE)
+	{
+		cout << "there is no piece on " << token << endl;
+		return false;
+	}
+
+	return true;
 }
 
-void Test::log_piece_available_captures()
+template<GenType Type>
+void Test::log_piece_moves(MoveList<Type>& list)
 {
-	// HACK: only works for the piece color that is about to move
-	MoveList list = MoveList<CAPTURES>(*pos);
-	int legal_move_count = 0;
-
-	// HACK: rough around the edges, but if program had a compatible GUI or general chess program, 
-	// this would obviously be optimized rather than using string comparisons for getting moves
-	for (ExtMove m : list)
+	if (is_checkmate(pos))
 	{
-		if (UCI::square(from_sq(m)) == token) legal_move_count++;
+		cout << "no legal moves, checkmate" << endl;
+		return;
 	}
 
-	cout << "piece on " << token << " has " << legal_move_count << " captures:" << endl;
-	for (ExtMove m : list) log_move_if_valid(m);
+	Square square = string_to_square(token);
+	Piece piece = get_piece_on_square(pos, square);
+	Color piece_color = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
+	
+	if (pos->side_to_move() != piece_color)
+	{
+		cout << "piece cannot ";
+		cout << ((Type == LEGAL) ? "move" : "capture");
+		cout << ", it is not this color's turn yet" << endl;
+		return;
+	}
+
+	int legal_move_count = 0;
+
+	for (ExtMove m : list)
+	{
+		if (from_sq(m) == square) legal_move_count++;
+	}
+
+	cout << "piece on " << token << " has " << legal_move_count;
+	cout << ((Type == LEGAL) ? " legal moves:" : " captures:") << endl;
+
+	for (ExtMove m : list)
+	{
+		if (from_sq(m) == square) cout << "\t" << move_to_string(m) << endl;
+	}
 }
 
 void Test::log_piece_is_pinned()
 {
-	//Bitboard occupied = pieces() ^ from ^ to;
 	Square square = string_to_square(token);
+	Piece piece = get_piece_on_square(pos, square);
+	Color piece_color = color_of(piece);
 
-	Color color = square_to_piece_color(square);
-
-	Bitboard block_board = pos->blockers_for_king(color);
+	Bitboard block_board = pos->blockers_for_king(piece_color);
 
 	bool is_pinned = block_board & square;
 
@@ -108,11 +139,11 @@ void Test::log_piece_is_pinned()
 void Test::log_piece_is_hanging()
 {
 	Square square = string_to_square(token);
+	Piece piece = get_piece_on_square(pos, square);
+	Color piece_color = color_of(piece);
 
-	Color color = square_to_piece_color(square);
-
-	Bitboard ally_piece_board = pos->pieces(color);
-	Bitboard enemy_piece_board = pos->pieces(~color);
+	Bitboard ally_piece_board = pos->pieces(piece_color);
+	Bitboard enemy_piece_board = pos->pieces(~piece_color);
 	Bitboard attack_board = pos->attackers_to(square);
 
 	bool is_defended = ally_piece_board & attack_board;
@@ -122,6 +153,21 @@ void Test::log_piece_is_hanging()
 
 	cout << "is piece hanging? ";
 	cout << (is_hanging ? "yes" : "no") << endl;
+}
+
+void Test::log_legal_moves_for_capturable_pieces()
+{
+	// get capture moves for piece
+	// if (has captures)
+		// change who's turn it is of fen/position
+		// foreach capturable piece
+			// get legal moves
+
+	//debug_log_bitboard(pos->checkers());
+	//debug_log_bitboard(pos->blockers_for_king(~pos->side_to_move()));
+
+	//MoveList legal_moves = MoveList<LEGAL>(*pos);
+	//log_piece_moves(legal_moves);
 }
 
 #pragma endregion
@@ -140,60 +186,6 @@ void Test::run_position_function_ideas()
 void Test::run_move_function_ideas()
 {
 	cerr << "no implementation" << endl;
-}
-
-#pragma endregion
-
-#pragma region Utility Code
-
-void Test::log_move_if_valid(ExtMove m)
-{
-	if (UCI::square(from_sq(m)) == token)
-		cout << "\t" << UCI::square(from_sq(m)) << UCI::square(to_sq(m)) << endl;
-}
-
-Square Test::string_to_square(string& str)
-{
-	if (str.size() != 2) return SQ_NONE;
-
-	string alphabet = "abcdefgh";
-	string numbers = "12345678";
-
-	File f = static_cast<File>(alphabet.find(str.at(0)));
-	Rank r = static_cast<Rank>(numbers.find(str.at(1)));
-
-	return make_square(f, r);
-}
-
-Color Test::square_to_piece_color(Square square)
-{
-	Piece piece = pos->piece_on(square);
-
-	if (piece == NO_PIECE) return COLOR_NB;
-
-	return color_of(piece);
-}
-
-#pragma endregion
-
-#pragma region Debug Functions
-
-void Test::debug_log_bitboard(Bitboard b) 
-{
-	// this function has been copied from Bitboard::pretty
-
-	std::string s = "+---+---+---+---+---+---+---+---+\n";
-
-	for (Rank r = RANK_8; r >= RANK_1; --r)
-	{
-		for (File f = FILE_A; f <= FILE_H; ++f)
-			s += b & make_square(f, r) ? "| X " : "|   ";
-
-		s += "| " + std::to_string(1 + r) + "\n+---+---+---+---+---+---+---+---+\n";
-	}
-	s += "  a   b   c   d   e   f   g   h\n";
-
-	cout << s << endl;
 }
 
 #pragma endregion
