@@ -29,8 +29,8 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 
 This repository mostly consists of Stockfish source code, which can be found here: https://github.com/official-stockfish/Stockfish. The only files that were edited/created outside of this repository are the following:
 ```
-- uci.cpp 		: edited on line 238 & line 291, added command line function "test -arg -arg"
-- movegen.cpp 	: edited on line 238, removed assertion when color is in check
+- uci.cpp		: edited on line 238 & line 291, added command line function "test -arg -arg"
+- movegen.cpp	: edited on line 238, removed assertion when color is in check
 - test.h 		: added file
 - test.cpp		: added file
 - utilities.h	: added file
