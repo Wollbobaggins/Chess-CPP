@@ -91,11 +91,13 @@ namespace Utilities
 		limits.depth = 3;
 		limits.searchmoves.push_back(UCI::to_move(*pos, move));
 
-		//string output = "";
+		string output = "";
 
-		//// create a new stringbuf for the threads & associate with std::cout
-		//stringbuf stringBuffer(ios::out);
-		//streambuf* oldStringBuffer = cout.rdbuf(&stringBuffer);
+		// create a new stringbuf for the threads & associate with std::cout
+		stringbuf stringBuffer(ios::out);
+		streambuf* oldStringBuffer = cout.rdbuf(&stringBuffer);
+
+		cout << "other" << endl;
 
 		// start searching
 		Threads.start_thinking(*pos, *states, limits, false);
@@ -104,8 +106,8 @@ namespace Utilities
 		//// finished thinking, but now wait for main thread to log bestmove & copy current messages
 		//while (output.find("bestmove") == string::npos) { output = stringBuffer.str(); }
 
-		//// restore cout's original buffer
-		//cout.rdbuf(oldStringBuffer);
+		// restore cout's original buffer
+		cout.rdbuf(oldStringBuffer);
 
 		//cout << output << endl; // print out the modified output
 
