@@ -172,10 +172,10 @@ namespace Utilities
 
 #pragma region Engine Functions
 
-	vector<pair<string, int>> get_best_moves(Position* pos, StateListPtr* states)
+	vector<pair<string, int>> get_move_evaluations(Position* pos, StateListPtr* states)
 	{
 		MoveList legal_moves = MoveList<LEGAL>(*pos);
-		vector<pair<string, int>> best_moves;
+		vector<pair<string, int>> move_evaluations;
 		string move_string;
 
 		Search::LimitsType limits;
@@ -205,14 +205,52 @@ namespace Utilities
 
 			pair<string, int> p(move_string, get_evaluation_from_output(output, limits.depth));
 
-			best_moves.push_back(p);
+			move_evaluations.push_back(p);
 		}
 
 		// restore cout's original buffer
 		cout.rdbuf(oldStringBuffer);
 
-		return best_moves;
+		sort_move_evaluations(move_evaluations);
+
+		return move_evaluations;
 	}
+
+	pair<string, int> get_best_move_evaluation_after_given_move(
+		Position* pos, StateListPtr* states, Move move)
+	{
+		string originalFen = pos->fen();
+
+		make_move(pos, states, move);
+
+		vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
+
+		set_position(pos, states, originalFen);
+
+		return move_evaluations[0];
+	}
+
+	int get_centipawn_loss(Position* pos, StateListPtr* states, string& token)
+	{
+		vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
+		sort_move_evaluations(move_evaluations);
+
+		pair<string, int> bestMoveEval = move_evaluations[0];
+		pair<string, int> token_move_eval;
+
+		for (pair<string, int> item : move_evaluations)
+		{
+			if (item.first == token)
+			{
+				token_move_eval = item;
+				break;
+			}
+		}
+
+		return bestMoveEval.second - token_move_eval.second;
+	}
+
+
 
 #pragma endregion
 

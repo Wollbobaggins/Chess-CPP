@@ -253,8 +253,7 @@ void Test::log_best_moves()
 		n = 10000;
 	}
 
-	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
-	sort_move_evaluations(move_evaluations);
+	vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
 
 	for (pair<string, int> item : move_evaluations)
 	{
@@ -281,8 +280,7 @@ void Test::log_threat_moves()
 		n = 10000;
 	}
 
-	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
-	sort_move_evaluations(move_evaluations);
+	vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
 
 	for (int i = move_evaluations.size() - 1; i >= 0; i--)
 	{
@@ -341,22 +339,7 @@ bool Test::is_move_token_valid()
 
 void Test::log_move_centipawn_loss()
 {
-	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
-	sort_move_evaluations(move_evaluations);
-
-	pair<string, int> best_move = move_evaluations[0];
-	pair<string, int> token_move;
-
-	for (pair<string, int> item : move_evaluations)
-	{
-		if (item.first == token)
-		{
-			token_move = item;
-			break;
-		}
-	}
-
-	int loss = best_move.second - token_move.second;
+	int loss = get_centipawn_loss(pos, states, token);
 
 	if (loss == 0) cout << "no centipawn loss, bestmove found by engine" << endl;
 	else cout << "centipawn loss of " << loss << endl;
@@ -436,7 +419,21 @@ void Test::log_does_allow_static_exchange_evaluation()
 
 void Test::log_does_permit_good_move()
 {
-	cerr << "no implementation" << endl;
+	int permitCentipawnLoss = 200;
+
+	int loss = get_centipawn_loss(pos, states, token);
+
+	if (loss >= permitCentipawnLoss)
+	{
+		Move move = UCI::to_move(*pos, token);
+
+		cout << "yes, this move permits a good move: ";
+		cout << get_best_move_evaluation_after_given_move(pos, states, move).first << endl;
+	}
+	else
+	{
+		cout << "no, this move does not permit a good move" << endl;
+	}
 }
 
 void Test::log_does_permit_good_move_on_square()

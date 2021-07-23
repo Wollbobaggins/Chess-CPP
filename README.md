@@ -22,7 +22,7 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [x] (2) does this move capture a hanging piece
 - [x] (3) is this move a winning capture according to Static Exchange Evaluation? (https://www.chessprogramming.org/Static_Exchange_Evaluation)
 - [x] (4) does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
-- [ ] (5) does this move *permit* the opponent to play a good move?
+- [x] (5) does this move *permit* the opponent to play a good move?
 - [ ] (6) does this move *permit* the opponent to play a good move, by undefending a specific square?
 
 ## Execution
