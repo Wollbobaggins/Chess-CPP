@@ -7,23 +7,23 @@
 Some ideas are suggested below. You won't be able to do all of these things in the time provided — that's OK — do what you can! 
 
 #### Piece function ideas
-- [x] how many legal moves does it have
-- [x] how many pieces can it capture
-- [x] is it pinned
-- [x] is it hanging
-- [ ] how many legal moves are there for all the pieces it can capture
+- [x] (1) how many legal moves does it have
+- [x] (2) how many pieces can it capture
+- [x] (3) is it pinned
+- [x] (4) is it hanging
+- [x] (5) how many legal moves are there for all the pieces it can capture
 
 #### Position function ideas
-- [x] get a vector of the best N moves from the position (using an engine)
-- [x] get a vector of threat moves from the position (moves that would be good for the player not-to-move)
+- [x] (1) get a vector of the best N moves from the position (using an engine)
+- [x] (2) get a vector of threat moves from the position (moves that would be good for the player not-to-move)
 
 #### Move function ideas
-- [ ] how many centipawns are lost by this move
-- [ ] does this move capture a hanging piece
-- [ ] is this move a winning capture according to Static Exchange Evaluation? (https://www.chessprogramming.org/Static_Exchange_Evaluation)
-- [ ] does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
-- [ ] does this move *permit* the opponent to play a good move?
-- [ ] does this move *permit* the opponent to play a good move, by undefending a specific square?
+- [ ] (1) how many centipawns are lost by this move
+- [ ] (2) does this move capture a hanging piece
+- [ ] (3) is this move a winning capture according to Static Exchange Evaluation? (https://www.chessprogramming.org/Static_Exchange_Evaluation)
+- [ ] (4) does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
+- [ ] (5) does this move *permit* the opponent to play a good move?
+- [ ] (6) does this move *permit* the opponent to play a good move, by undefending a specific square?
 
 ## Execution
 

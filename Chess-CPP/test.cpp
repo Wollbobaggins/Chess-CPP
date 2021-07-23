@@ -55,19 +55,19 @@ void Test::run_piece_function_ideas()
 
 	if (!is_piece_token_valid()) return;
 
-	// Piece Function Idea 1
+	cout << "(1) "; // Piece Function Idea 1
 	log_piece_legal_moves(); 
 
-	// Piece Function Idea 2
+	cout << "(2) "; // Piece Function Idea 2
 	log_piece_captures(); 
 
-	// Piece Function Idea 3
+	cout << "(3) "; // Piece Function Idea 3
 	log_piece_is_pinned(); 
 
-	// Piece Function Idea 4
+	cout << "(4) "; // Piece Function Idea 4
 	log_piece_is_hanging(); 
 
-	// Piece Function Idea 5
+	cout << "(5) "; // Piece Function Idea 5
 	log_legal_moves_for_capturable_pieces(); 
 } 
 
@@ -111,16 +111,16 @@ void Test::log_piece_legal_moves()
 	MoveList legal_moves = MoveList<LEGAL>(*pos);
 	int legal_move_count = 0;
 
-	for (ExtMove m : legal_moves)
+	for (ExtMove move : legal_moves)
 	{
-		if (from_sq(m) == square) legal_move_count++;
+		if (from_sq(move) == square) legal_move_count++;
 	}
 
 	cout << "piece on " << token << " has " << legal_move_count << " legal moves:" << endl;
 
-	for (ExtMove m : legal_moves)
+	for (ExtMove move : legal_moves)
 	{
-		if (from_sq(m) == square) cout << "\t" << move_to_string(m) << endl;
+		if (from_sq(move) == square) cout << "\t" << move_to_string(move) << endl;
 	}
 }
 
@@ -146,17 +146,17 @@ void Test::log_piece_captures()
 	MoveList captures = MoveList<CAPTURES>(*pos);
 	int capture_count = 0;
 
-	for (ExtMove m : captures)
+	for (ExtMove move : captures)
 	{
-		if (from_sq(m) == square && legal_moves.contains(m)) capture_count++;
+		if (from_sq(move) == square && legal_moves.contains(move)) capture_count++;
 	}
 
 	cout << "piece on " << token << " has " << capture_count << " captures:" << endl;
 
-	for (ExtMove m : captures)
+	for (ExtMove move : captures)
 	{
-		if (from_sq(m) == square && legal_moves.contains(m))
-			cout << "\t" << move_to_string(m) << endl;
+		if (from_sq(move) == square && legal_moves.contains(move))
+			cout << "\t" << move_to_string(move) << endl;
 	}
 }
 
@@ -211,25 +211,23 @@ void Test::log_legal_moves_for_capturable_pieces()
 		return;
 	}
 
+	cout << "logging legal moves for capturable pieces" << endl;
+
 	MoveList legal_moves = MoveList<LEGAL>(*pos);
 	MoveList captures = MoveList<CAPTURES>(*pos);
 
-	// Change who's move it is
-	string current_fen = pos->fen();
-	string fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
-	//set_position(pos, states, fen);
-	cout << current_fen << endl;
+	change_side_to_move(pos, states);
 
-	//for (ExtMove m : captures)
-	//{
-	//	if (from_sq(m) == square && legal_moves.contains(m))
-	//	{
-	//		token = square_to_string(to_sq(m));
-	//		log_piece_legal_moves();
-	//	}
-	//}
+	for (ExtMove move : captures)
+	{
+		if (from_sq(move) == square && legal_moves.contains(move))
+		{
+			token = square_to_string(to_sq(move)); // HACK: we can edit token, last time it's used
+			log_piece_legal_moves();
+		}
+	}
 
-	// Change back to original move
+	change_side_to_move(pos, states);
 }
 
 #pragma endregion
@@ -240,7 +238,10 @@ void Test::run_position_function_ideas()
 {
 	read_next_token();
 
+	cout << "(1) "; // Position Function Idea 1
 	log_best_moves();
+
+	cout << "(2) "; // Position Function Idea 2
 	log_threat_moves();
 }
 

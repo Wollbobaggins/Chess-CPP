@@ -18,7 +18,6 @@
 #include "Stockfish src/tt.h"
 #include "Stockfish src/uci.h"
 #include "Stockfish src/syzygy/tbprobe.h"
-#include "utilities.h"
 
 using namespace std;
 using namespace Stockfish;
@@ -26,6 +25,48 @@ using namespace chrono_literals;
 
 namespace Utilities
 {
+#pragma region Misc Utility Functions
+
+	bool compare_move_evaluations(pair<string, int>& a, pair<string, int>& b)
+	{
+		return a.second > b.second;
+	}
+
+	void sort_move_evaluations(vector<pair<string, int>>& move_evaluations)
+	{
+		sort(move_evaluations.begin(), move_evaluations.end(), compare_move_evaluations);
+	}
+
+	string get_next_word(string& text, int& index)
+	{
+		string output = "";
+		int startIndex = index;
+		int length = text.length() - index;
+		for (char s : text.substr(startIndex, length))
+		{
+			index++;
+			if (s == ' ') return output;
+			output += s;
+		}
+	}
+
+	int get_evaluation_from_output(string& output, int depth)
+	{
+		int index = output.find("depth " + to_string(depth));
+
+		while (get_next_word(output, index) != "score") {}
+
+		string cp = get_next_word(output, index);
+		int score;
+
+		if (cp == "cp") score = stoi(get_next_word(output, index));
+		else score = VALUE_INFINITE * stoi(get_next_word(output, index));
+
+		return score;
+	}
+
+#pragma endregion
+
 #pragma region Conversion Functions
 
 	string move_to_string(ExtMove move)
@@ -80,62 +121,26 @@ namespace Utilities
 		return !legal_moves.size();
 	}
 
-	void set_side_to_move(Position* pos, StateListPtr* states, Color color)
+	void change_side_to_move(Position* pos, StateListPtr* states)
 	{
+		string fen = pos->fen();
 
-	}
+		int index = 0;
+		get_next_word(fen, index);
 
-	void set_position(Position* pos, StateListPtr* states, string& fen)
-	{
-		// code copied from UCI::position(Position& pos, istringstream& is, StateListPtr& states)
-		*states = StateListPtr(new std::deque<StateInfo>(1)); // Drop old and create a new one
+		fen[index] = (pos->side_to_move() == WHITE) ? 'b' : 'w';
+
 		pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
 	}
 
-#pragma endregion
-
-#pragma region Misc Utility Functions
-
-	bool compare_move_evaluations(pair<string, int>& a, pair<string, int>& b)
-	{
-		return a.second > b.second;
-	}
-
-	void sort_move_evaluations(vector<pair<string, int>>& move_evaluations)
-	{
-		sort(move_evaluations.begin(), move_evaluations.end(), compare_move_evaluations);
-	}
-
-	string get_next_word(string& text, int& index)
-	{
-		string output = "";
-		int startIndex = index;
-		int length = text.length() - index;
-		for (char s : text.substr(startIndex, length))
-		{
-			index++;
-			if (s == ' ') return output;
-			output += s;
-		}
-	}
-
-	int get_evaluation_from_output(string& output, int depth)
-	{
-		int index = output.find("depth " + to_string(depth));
-
-		while (get_next_word(output, index) != "score") {}
-
-		string cp = get_next_word(output, index);
-		int score;
-
-		if (cp == "cp") score = stoi(get_next_word(output, index));
-		else score = VALUE_INFINITE * stoi(get_next_word(output, index));
-
-		return score;
-	}
+	//void set_position(Position* pos, StateListPtr* states, string& fen)
+	//{
+	//	// code copied from UCI::position(Position& pos, istringstream& is, StateListPtr& states)
+	//	*states = StateListPtr(new std::deque<StateInfo>(1)); // Drop old and create a new one
+	//	pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
+	//}
 
 #pragma endregion
-
 
 #pragma region Engine Functions
 
