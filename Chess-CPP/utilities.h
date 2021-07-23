@@ -6,6 +6,9 @@
 #include <sstream>
 #include <string>
 
+#include <chrono>
+#include <thread>
+
 #include "Stockfish src/evaluate.h"
 #include "Stockfish src/movegen.h"
 #include "Stockfish src/position.h"
@@ -15,9 +18,11 @@
 #include "Stockfish src/tt.h"
 #include "Stockfish src/uci.h"
 #include "Stockfish src/syzygy/tbprobe.h"
+#include "utilities.h"
 
 using namespace std;
 using namespace Stockfish;
+using namespace chrono_literals;
 
 namespace Utilities
 {
@@ -46,6 +51,12 @@ namespace Utilities
 		Rank r = static_cast<Rank>(numbers.find(str.at(1)));
 
 		return make_square(f, r);
+	}
+
+	string int_to_string_evaluation(int eval)
+	{
+		if (abs(eval) >= VALUE_INFINITE) return "mate in " + to_string(eval / VALUE_INFINITE);
+		else return to_string(eval) + " centipawns";
 	}
 
 #pragma endregion
@@ -83,37 +94,91 @@ namespace Utilities
 
 #pragma endregion
 
+#pragma region Misc Utility Functions
+
+	bool compare_move_evaluations(pair<string, int>& a, pair<string, int>& b)
+	{
+		return a.second > b.second;
+	}
+
+	void sort_move_evaluations(vector<pair<string, int>>& move_evaluations)
+	{
+		sort(move_evaluations.begin(), move_evaluations.end(), compare_move_evaluations);
+	}
+
+	string get_next_word(string& text, int& index)
+	{
+		string output = "";
+		int startIndex = index;
+		int length = text.length() - index;
+		for (char s : text.substr(startIndex, length))
+		{
+			index++;
+			if (s == ' ') return output;
+			output += s;
+		}
+	}
+
+	int get_evaluation_from_output(string& output, int depth)
+	{
+		int index = output.find("depth " + to_string(depth));
+
+		while (get_next_word(output, index) != "score") {}
+
+		string cp = get_next_word(output, index);
+		int score;
+
+		if (cp == "cp") score = stoi(get_next_word(output, index));
+		else score = VALUE_INFINITE * stoi(get_next_word(output, index));
+
+		return score;
+	}
+
+#pragma endregion
+
+
 #pragma region Engine Functions
 
-	int evaluate_move(Position* pos, StateListPtr* states, string& move)
+	vector<pair<string, int>> get_best_moves(Position* pos, StateListPtr* states)
 	{
-		Search::LimitsType limits;
-		limits.depth = 3;
-		limits.searchmoves.push_back(UCI::to_move(*pos, move));
+		MoveList legal_moves = MoveList<LEGAL>(*pos);
+		vector<pair<string, int>> best_moves;
+		string move_string;
 
-		string output = "";
+		Search::LimitsType limits;
+		limits.depth = 5; 
 
 		// create a new stringbuf for the threads & associate with std::cout
 		stringbuf stringBuffer(ios::out);
 		streambuf* oldStringBuffer = cout.rdbuf(&stringBuffer);
+		string output = "";
 
-		cout << "other" << endl;
+		for (ExtMove move : legal_moves)
+		{
+			move_string = move_to_string(move);
+			limits.searchmoves.clear();
+			limits.searchmoves.push_back(move);
 
-		// start searching
-		Threads.start_thinking(*pos, *states, limits, false);
-		while (!Threads.stop) { /* wait for search */ }
+			output = "";
+			stringBuffer.str(output);
 
-		//// finished thinking, but now wait for main thread to log bestmove & copy current messages
-		//while (output.find("bestmove") == string::npos) { output = stringBuffer.str(); }
+			// start searching
+			Threads.start_thinking(*pos, *states, limits, false);
+			while (!Threads.stop) { /* wait for search */ }
+
+			this_thread::sleep_for(1ms);
+
+			output = stringBuffer.str();
+
+			pair<string, int> p(move_string, get_evaluation_from_output(output, limits.depth));
+
+			best_moves.push_back(p);
+		}
 
 		// restore cout's original buffer
 		cout.rdbuf(oldStringBuffer);
 
-		//cout << output << endl; // print out the modified output
-
-		cout << "WOO done!" << endl;
-
-		return 0;
+		return best_moves;
 	}
 
 #pragma endregion

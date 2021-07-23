@@ -238,38 +238,67 @@ void Test::log_legal_moves_for_capturable_pieces()
 
 void Test::run_position_function_ideas()
 {
+	read_next_token();
+
 	log_best_moves();
+	log_threat_moves();
 }
 
 void Test::log_best_moves()
 {
-	MoveList legal_moves = MoveList<LEGAL>(*pos);
-	map<string, int> best_moves;
-	string move_string;
-
-	for (ExtMove move : legal_moves)
+	int n = 0;
+	try
 	{
-		move_string = move_to_string(move);
-		best_moves[move_string] = evaluate_move(pos, states, move_string);
+		n = stoi(token);
+		cout << "logging best " << n << " moves" << endl;
+	}
+	catch (invalid_argument& e)
+	{
+		// if no conversion could be performed
+		cout << "unrecognized value of N, logging all best moves" << endl;
+		n = 10000;
 	}
 
-	for (auto item : best_moves)
+	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
+	sort_move_evaluations(move_evaluations);
+
+	for (auto item : move_evaluations)
 	{
-		cout << "\t" << item.first << ": " << item.second << endl;
+		if (n-- == 0) break;
+
+		cout << "\t" << item.first << ": " << int_to_string_evaluation(item.second) << endl;
 	}
 
-	// get all legal moves
-
-	// for each legal move, evaluate the position
-	//string str = "e2e4";
-	//limits.searchmoves.clear();
-	//limits.searchmoves.push_back(UCI::to_move(*pos, str));
-
+	if (n != 0) cout << "\tno more moves found" << endl;
 }
 
 void Test::log_threat_moves()
 {
+	int n = 0;
+	try
+	{
+		n = stoi(token);
+		cout << "logging threat " << n << " moves" << endl;
+	}
+	catch (invalid_argument& e)
+	{
+		// if no conversion could be performed
+		cout << "unrecognized value of N, logging all threat moves" << endl;
+		n = 10000;
+	}
 
+	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
+	sort_move_evaluations(move_evaluations);
+
+	for (int i = move_evaluations.size() - 1; i >= 0; i--)
+	{
+		if (n-- == 0) break;
+
+		cout << "\t" << move_evaluations[i].first << ": ";
+		cout << int_to_string_evaluation(move_evaluations[i].second) << endl;
+	}
+
+	if (n != 0) cout << "\tno more moves found" << endl;
 }
 
 #pragma endregion
@@ -279,7 +308,6 @@ void Test::log_threat_moves()
 void Test::run_move_function_ideas()
 {
 	cerr << "no implementation" << endl;
-	//cout << Threads.main()->id() << Threads.main()->exit << Threads.main()->id() << endl;
 }
 
 #pragma endregion
