@@ -14,8 +14,8 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [ ] how many legal moves are there for all the pieces it can capture
 
 #### Position function ideas
-- [ ] get a vector of the best N moves from the position (using an engine)
-- [ ] get a vector of threat moves from the position (moves that would be good for the player not-to-move)
+- [x] get a vector of the best N moves from the position (using an engine)
+- [x] get a vector of threat moves from the position (moves that would be good for the player not-to-move)
 
 #### Move function ideas
 - [ ] how many centipawns are lost by this move
