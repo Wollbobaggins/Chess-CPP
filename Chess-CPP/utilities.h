@@ -139,6 +139,23 @@ namespace Utilities
 		pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
 	}
 
+	bool is_piece_hanging_on_square(Position* pos, Square square)
+	{
+		Piece piece = get_piece_on_square(pos, square);
+		if (get_piece_on_square(pos, square) == NO_PIECE) return false;
+
+		Color piece_color = color_of(piece);
+
+		Bitboard ally_piece_board = pos->pieces(piece_color);
+		Bitboard enemy_piece_board = pos->pieces(~piece_color);
+		Bitboard attack_board = pos->attackers_to(square);
+
+		bool is_defended = ally_piece_board & attack_board;
+		bool is_attacked = enemy_piece_board & attack_board;
+
+		return !is_defended && is_attacked;
+	}
+
 #pragma endregion
 
 #pragma region Engine Functions

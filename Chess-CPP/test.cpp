@@ -176,27 +176,14 @@ void Test::log_piece_is_pinned()
 
 	bool is_pinned = block_board & square;
 
-	cout << "is piece absolute pinned? ";
-	cout << (is_pinned ? "yes" : "no") << endl;
+	cout << "is piece absolute pinned? " << (is_pinned ? "yes" : "no") << endl;
 }
 
 void Test::log_piece_is_hanging()
 {
-	Square square = string_to_square(token);
-	Piece piece = get_piece_on_square(pos, square);
-	Color piece_color = color_of(piece);
+	bool is_hanging = is_piece_hanging_on_square(pos, string_to_square(token));
 
-	Bitboard ally_piece_board = pos->pieces(piece_color);
-	Bitboard enemy_piece_board = pos->pieces(~piece_color);
-	Bitboard attack_board = pos->attackers_to(square);
-
-	bool is_defended = ally_piece_board & attack_board;
-	bool is_attacked = enemy_piece_board & attack_board;
-
-	bool is_hanging = !is_defended && is_attacked;
-
-	cout << "is piece hanging? ";
-	cout << (is_hanging ? "yes" : "no") << endl;
+	cout << "is piece hanging? " << (is_hanging ? "yes" : "no") << endl;
 }
 
 void Test::log_legal_moves_for_capturable_pieces()
@@ -354,8 +341,6 @@ bool Test::is_move_token_valid()
 
 void Test::log_move_centipawn_loss()
 {
-	cout << "move " << token << " has ";
-
 	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
 	sort_move_evaluations(move_evaluations);
 
@@ -379,7 +364,12 @@ void Test::log_move_centipawn_loss()
 
 void Test::log_move_is_hanging_capture()
 {
-	cerr << "no implementation" << endl;
+	Move move = UCI::to_move(*pos, token);
+
+	bool is_hanging = is_piece_hanging_on_square(pos, to_sq(move));
+
+	cout << ((is_hanging) ? "yes, does " : "no, does not ");
+	cout << "capture a hanging piece on " << token[2] << token[3] << endl;
 }
 
 void Test::log_is_winning_static_exchange_evaluation()
