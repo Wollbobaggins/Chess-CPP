@@ -1,5 +1,9 @@
 // TODO: rename some of these
 // TODO: adhere to c++ naming conventions (data members should be camel cased)
+// TODO: write sample output for README.md
+// TODO: write batch file command to run all output and tests
+// TODO: command to change test settings
+// HACK: engine will return different search results everytime a search is called
 
 #pragma once
 
@@ -40,18 +44,25 @@ private:
 	// piece functions
 	void run_piece_function_ideas();
 	bool is_piece_token_valid();
-	void log_piece_legal_moves();
-	void log_piece_captures();
-	void log_piece_is_pinned();
-	void log_piece_is_hanging();
-	void log_legal_moves_for_capturable_pieces();
+	void log_piece_legal_moves(); // Piece Function Idea 1
+	void log_piece_captures(); // Piece Function Idea 2
+	void log_piece_is_pinned(); // Piece Function Idea 3
+	void log_piece_is_hanging(); // Piece Function Idea 4
+	void log_legal_moves_for_capturable_pieces(); // Piece Function Idea 5
 
 	// position functions
 	void run_position_function_ideas();
-	void log_best_moves();
-	void log_threat_moves();
+	void log_best_moves(); // Position Function Idea 1
+	void log_threat_moves(); // Position Function Idea 2
 
 	// move functions
-	void run_move_function_ideas();
+	void run_move_function_ideas(); 
+	bool is_move_token_valid();
+	void log_move_centipawn_loss(); // Move Function Idea 1
+	void log_move_is_hanging_capture(); // Move Function Idea 2
+	void log_is_winning_static_exchange_evaluation(); // Move Function Idea 3
+	void log_does_allow_static_exchange_evaluation(); // Move Function Idea 4
+	void log_does_permit_good_move(); // Move Function Idea 5
+	void log_does_permit_good_move_on_square(); // Move Function Idea 6
 };
 

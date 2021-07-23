@@ -18,7 +18,7 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [x] (2) get a vector of threat moves from the position (moves that would be good for the player not-to-move)
 
 #### Move function ideas
-- [ ] (1) how many centipawns are lost by this move
+- [x] (1) how many centipawns are lost by this move
 - [ ] (2) does this move capture a hanging piece
 - [ ] (3) is this move a winning capture according to Static Exchange Evaluation? (https://www.chessprogramming.org/Static_Exchange_Evaluation)
 - [ ] (4) does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
@@ -49,12 +49,10 @@ To run the test, compile the program into an executable and run it from the comm
 	
 ## Evaluation
 
-#### Number of Objectives Achieved: 4 / 13
+#### Number of Objectives Achieved: X / 13
 
-To be frank, this technical test was pretty rough for me. While <strong>I felt that the listed requirements/objectives were not that challenging</strong>, understanding the framework was very difficult. Before this examination, <strong>I had never worked with UCI protocols or any chess engine</strong> other than my own (which was not UCI compliant); as a result, the vast <strong>majority of time bottlenecks arose from reading and comprehending the API and source code</strong> for both chess engine and GUI. And wow! I could not find any sort of documentation explaining the code behind Stockfish other than the comments that were provided directly in the source!
-
-Overall, a score of 4 / 13 is not ideal. However, I truly believe that had I previously been familiar with the source materials, I would have achieved a far higher score. Please take this into consideration.
+We'll get to this description later...
 
 ## Final Notes
 
-Thank you so much for the opportunity  and chance to work with Chess.com. This was incredibly exciting for me as the prospect of working with my favorite company and my favorite pastime was just awesome. I definitely feel much more prepared to work with chess engines in the future!
+We'll get to this description later...

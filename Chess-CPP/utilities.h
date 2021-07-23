@@ -88,8 +88,13 @@ namespace Utilities
 		string alphabet = "abcdefgh";
 		string numbers = "12345678";
 
-		File f = static_cast<File>(alphabet.find(str.at(0)));
-		Rank r = static_cast<Rank>(numbers.find(str.at(1)));
+		size_t index = alphabet.find(str.at(0));
+		if (index == -1) return SQ_NONE;
+		File f = static_cast<File>(index);
+
+		index = numbers.find(str.at(1));
+		if (index == -1) return SQ_NONE;
+		Rank r = static_cast<Rank>(index);
 
 		return make_square(f, r);
 	}
@@ -130,15 +135,9 @@ namespace Utilities
 
 		fen[index] = (pos->side_to_move() == WHITE) ? 'b' : 'w';
 
+		*states = StateListPtr(new deque<StateInfo>(1));
 		pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
 	}
-
-	//void set_position(Position* pos, StateListPtr* states, string& fen)
-	//{
-	//	// code copied from UCI::position(Position& pos, istringstream& is, StateListPtr& states)
-	//	*states = StateListPtr(new std::deque<StateInfo>(1)); // Drop old and create a new one
-	//	pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
-	//}
 
 #pragma endregion
 
@@ -151,7 +150,7 @@ namespace Utilities
 		string move_string;
 
 		Search::LimitsType limits;
-		limits.depth = 5; 
+		limits.depth = 5; // HACK: hardcoded depth for engine
 
 		// create a new stringbuf for the threads & associate with std::cout
 		stringbuf stringBuffer(ios::out);

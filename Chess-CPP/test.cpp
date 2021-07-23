@@ -75,6 +75,12 @@ bool Test::is_piece_token_valid()
 {
 	Square square = string_to_square(token);
 
+	if (token == "piece")
+	{
+		cout << "please enter a valid square" << endl;
+		return false;
+	}
+
 	if (square == SQ_NONE)
 	{
 		cout << token << " is not a valid square" << endl;
@@ -263,7 +269,7 @@ void Test::log_best_moves()
 	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
 	sort_move_evaluations(move_evaluations);
 
-	for (auto item : move_evaluations)
+	for (pair<string, int> item : move_evaluations)
 	{
 		if (n-- == 0) break;
 
@@ -307,6 +313,91 @@ void Test::log_threat_moves()
 #pragma region Move Functions Ideas
 
 void Test::run_move_function_ideas()
+{
+	read_next_token();
+
+	if (!is_move_token_valid()) return;
+
+	cout << "(1) "; // Move Function Idea 1
+	log_move_centipawn_loss();
+
+	cout << "(2) "; // Move Function Idea 2
+	log_move_is_hanging_capture();
+
+	cout << "(3) "; // Move Function Idea 3
+	log_is_winning_static_exchange_evaluation();
+
+	cout << "(4) "; // Move Function Idea 4
+	log_does_allow_static_exchange_evaluation();
+
+	cout << "(5) "; // Move Function Idea 5
+	log_does_permit_good_move();
+
+	cout << "(6) "; // Move Function Idea 6
+	log_does_permit_good_move_on_square();
+}
+
+bool Test::is_move_token_valid()
+{
+	if (token == "move")
+	{
+		cout << "please enter a valid move" << endl;
+		return false;
+	}
+
+	if (UCI::to_move(*pos, token)) return true;
+	
+	cout << token << " is not a valid move" << endl;
+
+	return false;
+}
+
+void Test::log_move_centipawn_loss()
+{
+	cout << "move " << token << " has ";
+
+	vector<pair<string, int>> move_evaluations = get_best_moves(pos, states);
+	sort_move_evaluations(move_evaluations);
+
+	pair<string, int> best_move = move_evaluations[0];
+	pair<string, int> token_move;
+
+	for (pair<string, int> item : move_evaluations)
+	{
+		if (item.first == token)
+		{
+			token_move = item;
+			break;
+		}
+	}
+
+	int loss = best_move.second - token_move.second;
+
+	if (loss == 0) cout << "no centipawn loss, bestmove found by engine" << endl;
+	else cout << "centipawn loss of " << loss << endl;
+}
+
+void Test::log_move_is_hanging_capture()
+{
+	cerr << "no implementation" << endl;
+}
+
+void Test::log_is_winning_static_exchange_evaluation()
+{
+	cerr << "no implementation" << endl;
+}
+
+void Test::log_does_allow_static_exchange_evaluation()
+{
+	cerr << "no implementation" << endl;
+}
+
+void Test::log_does_permit_good_move()
+{
+	cerr << "no implementation" << endl;
+}
+
+void Test::log_does_permit_good_move_on_square()
 {
 	cerr << "no implementation" << endl;
 }
