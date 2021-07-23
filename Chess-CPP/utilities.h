@@ -126,6 +126,12 @@ namespace Utilities
 		return !legal_moves.size();
 	}
 
+	void set_position(Position* pos, StateListPtr* states, string& fen)
+	{
+		*states = StateListPtr(new deque<StateInfo>(1));
+		pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
+	}
+
 	void change_side_to_move(Position* pos, StateListPtr* states)
 	{
 		string fen = pos->fen();
@@ -135,8 +141,14 @@ namespace Utilities
 
 		fen[index] = (pos->side_to_move() == WHITE) ? 'b' : 'w';
 
-		*states = StateListPtr(new deque<StateInfo>(1));
-		pos->set(fen, Options["UCI_Chess960"], &(*states)->back(), Threads.main());
+		set_position(pos, states, fen);
+	}
+
+	void make_move(Position* pos, StateListPtr* states, Move move)
+	{
+		(*states) = StateListPtr(new deque<StateInfo>(1));
+		(*states)->emplace_back();
+		pos->do_move(move, (*states)->back());
 	}
 
 	bool is_piece_hanging_on_square(Position* pos, Square square)

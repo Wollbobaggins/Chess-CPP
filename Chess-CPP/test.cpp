@@ -374,12 +374,64 @@ void Test::log_move_is_hanging_capture()
 
 void Test::log_is_winning_static_exchange_evaluation()
 {
-	cerr << "no implementation" << endl;
+	Move move = UCI::to_move(*pos, token);
+
+	MoveList captures = MoveList<CAPTURES>(*pos);
+
+	if (!captures.contains(move))
+	{
+		cout << "no, Static Exchange Evaluation does not apply, move is not a capture" << endl;
+		return;
+	}
+
+	Value threshold = PawnValueMg;
+	if (pos->see_ge(move, threshold))
+	{
+		cout << "yes, according to Static Exchange Evaluation, this is a winning capture" << endl;
+	}
+	else
+	{
+		cout << "no, according to Static Exchange Evaluation, ";
+		cout << "this is not a winning capture" << endl;
+	}
 }
 
 void Test::log_does_allow_static_exchange_evaluation()
 {
-	cerr << "no implementation" << endl;
+	string originalFen = pos->fen();
+
+	Move token_move = UCI::to_move(*pos, token);
+	make_move(pos, states, token_move);
+
+	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	MoveList captures = MoveList<CAPTURES>(*pos);
+
+	bool found_see = false;
+
+	for (ExtMove move : captures)
+	{
+		if (legal_moves.contains(move))
+		{
+			Value threshold = PawnValueMg;
+			if (pos->see_ge(move, threshold))
+			{
+				if (!found_see)
+				{
+					found_see = true;
+					cout << "yes, the opponent can make a winning capture according to Static ";
+					cout << "Exchange Evaluation through any of these moves:" << endl;
+				}
+				cout << "\t"<< move_to_string(move) << endl;
+			}
+		}
+	}
+
+	if (!found_see)
+	{
+		cout << "no, move does not allow the opponent to make a winning capture ";
+		cout << "according to Static Exchange Evaluation" << endl;
+	}
+	set_position(pos, states, originalFen);
 }
 
 void Test::log_does_permit_good_move()
