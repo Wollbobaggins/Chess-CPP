@@ -50,7 +50,7 @@ namespace Utilities
 
 #pragma endregion
 
-#pragma region General Utility Functions
+#pragma region Chess Utility Functions
 
 	Piece get_piece_on_square(Position* pos, Square square)
 	{
@@ -83,6 +83,39 @@ namespace Utilities
 
 #pragma endregion
 
+#pragma region Engine Functions
+
+	int evaluate_move(Position* pos, StateListPtr* states, string& move)
+	{
+		Search::LimitsType limits;
+		limits.depth = 3;
+		limits.searchmoves.push_back(UCI::to_move(*pos, move));
+
+		//string output = "";
+
+		//// create a new stringbuf for the threads & associate with std::cout
+		//stringbuf stringBuffer(ios::out);
+		//streambuf* oldStringBuffer = cout.rdbuf(&stringBuffer);
+
+		// start searching
+		Threads.start_thinking(*pos, *states, limits, false);
+		while (!Threads.stop) { /* wait for search */ }
+
+		//// finished thinking, but now wait for main thread to log bestmove & copy current messages
+		//while (output.find("bestmove") == string::npos) { output = stringBuffer.str(); }
+
+		//// restore cout's original buffer
+		//cout.rdbuf(oldStringBuffer);
+
+		//cout << output << endl; // print out the modified output
+
+		cout << "WOO done!" << endl;
+
+		return 0;
+	}
+
+#pragma endregion
+
 #pragma region Debug Functions
 
 	void debug_log_bitboard(Bitboard b)
@@ -101,6 +134,28 @@ namespace Utilities
 		s += "  a   b   c   d   e   f   g   h\n";
 
 		cout << s << endl;
+	}
+
+	string exec(string command) {
+		char buffer[128];
+		string result = "";
+
+		// Open pipe to file
+		FILE* pipe = _popen(command.c_str(), "r");
+		if (!pipe) {
+			return "_popen failed!";
+		}
+
+		// read till end of process:
+		while (!feof(pipe)) {
+
+			// use buffer to read and add to result
+			if (fgets(buffer, 128, pipe) != NULL)
+				result += buffer;
+		}
+
+		_pclose(pipe);
+		return result;
 	}
 
 #pragma endregion

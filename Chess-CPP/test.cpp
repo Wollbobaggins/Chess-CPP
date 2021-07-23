@@ -10,6 +10,7 @@ void Test::run(Position& _pos, istringstream& _is, StateListPtr& _states)
 	pos = &_pos;
 	is = &_is;
 	states = &_states;
+	token = "";
 
 	if (read_next_token())
 	{
@@ -237,7 +238,38 @@ void Test::log_legal_moves_for_capturable_pieces()
 
 void Test::run_position_function_ideas()
 {
-	cerr << "no implementation" << endl;
+	log_best_moves();
+}
+
+void Test::log_best_moves()
+{
+	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	map<string, int> best_moves;
+	string move_string;
+
+	for (ExtMove move : legal_moves)
+	{
+		move_string = move_to_string(move);
+		best_moves[move_string] = evaluate_move(pos, states, move_string);
+	}
+
+	for (auto item : best_moves)
+	{
+		cout << "\t" << item.first << ": " << item.second << endl;
+	}
+
+	// get all legal moves
+
+	// for each legal move, evaluate the position
+	//string str = "e2e4";
+	//limits.searchmoves.clear();
+	//limits.searchmoves.push_back(UCI::to_move(*pos, str));
+
+}
+
+void Test::log_threat_moves()
+{
+
 }
 
 #pragma endregion
@@ -247,6 +279,7 @@ void Test::run_position_function_ideas()
 void Test::run_move_function_ideas()
 {
 	cerr << "no implementation" << endl;
+	//cout << Threads.main()->id() << Threads.main()->exit << Threads.main()->id() << endl;
 }
 
 #pragma endregion

@@ -48,6 +48,8 @@ private:
 
 	// position functions
 	void run_position_function_ideas();
+	void log_best_moves();
+	void log_threat_moves();
 
 	// move functions
 	void run_move_function_ideas();
