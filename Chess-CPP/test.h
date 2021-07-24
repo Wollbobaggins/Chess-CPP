@@ -1,10 +1,3 @@
-// TODO: rename some of these
-// TODO: adhere to c++ naming conventions (data members should be camel cased)
-// TODO: write sample output for README.md
-// TODO: write batch file command to run all output and tests
-// TODO: command to change test settings
-// HACK: engine will return different search results everytime a search is called
-
 #pragma once
 
 #include <cassert>

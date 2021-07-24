@@ -1,5 +1,5 @@
 #pragma once
-//TODO: are there excess includes?
+
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -32,9 +32,9 @@ namespace Utilities
 		return a.second > b.second;
 	}
 
-	void sort_move_evaluations(vector<pair<string, int>>& move_evaluations)
+	void sort_move_evaluations(vector<pair<string, int>>& moveEvaluations)
 	{
-		sort(move_evaluations.begin(), move_evaluations.end(), compare_move_evaluations);
+		sort(moveEvaluations.begin(), moveEvaluations.end(), compare_move_evaluations);
 	}
 
 	string get_next_word(string& text, int& index)
@@ -77,7 +77,6 @@ namespace Utilities
 	string square_to_string(Square square)
 	{
 		// HACK: this code is redundant, but it makes things less of a headache
-
 		return UCI::square(square);
 	}
 
@@ -121,9 +120,9 @@ namespace Utilities
 
 	bool is_checkmate(Position* pos)
 	{
-		MoveList legal_moves = MoveList<LEGAL>(*pos);
+		MoveList legalMoves = MoveList<LEGAL>(*pos);
 
-		return !legal_moves.size();
+		return !legalMoves.size();
 	}
 
 	void set_position(Position* pos, StateListPtr* states, string& fen)
@@ -162,24 +161,22 @@ namespace Utilities
 		Piece piece = get_piece_on_square(pos, square);
 		if (get_piece_on_square(pos, square) == NO_PIECE) return false;
 
-		Color piece_color = color_of(piece);
+		Color pieceColor = color_of(piece);
 
-		bool is_defended = is_square_attacked_by_color(pos, square, piece_color);
-		bool is_attacked = is_square_attacked_by_color(pos, square, ~piece_color);
+		bool isDefended = is_square_attacked_by_color(pos, square, pieceColor);
+		bool isAttacked = is_square_attacked_by_color(pos, square, ~pieceColor);
 
-		return !is_defended && is_attacked;
+		return !isDefended && isAttacked;
 	}
-
-	//bool does_piece_attack_square(asdasd)
-	//{
-
-	//}
 
 	bool is_square_under_defended(Position* pos, Square square, Color color)
 	{
+		// TODO: write this function
+
 		// count how many attackers there are vs defenders
 
 		// return true if there are more attackers than defenders
+
 		return false;
 	}
 
@@ -189,9 +186,9 @@ namespace Utilities
 
 	vector<pair<string, int>> get_move_evaluations(Position* pos, StateListPtr* states)
 	{
-		MoveList legal_moves = MoveList<LEGAL>(*pos);
-		vector<pair<string, int>> move_evaluations;
-		string move_string;
+		MoveList legalMoves = MoveList<LEGAL>(*pos);
+		vector<pair<string, int>> moveEvaluations;
+		string moveString;
 
 		Search::LimitsType limits;
 		limits.depth = 3; // HACK: hardcoded depth for engine (shortens time)
@@ -201,9 +198,9 @@ namespace Utilities
 		streambuf* oldStringBuffer = cout.rdbuf(&stringBuffer);
 		string output = "";
 
-		for (ExtMove move : legal_moves)
+		for (ExtMove move : legalMoves)
 		{
-			move_string = move_to_string(move);
+			moveString = move_to_string(move);
 			limits.searchmoves.clear();
 			limits.searchmoves.push_back(move);
 
@@ -218,17 +215,17 @@ namespace Utilities
 
 			output = stringBuffer.str();
 
-			pair<string, int> p(move_string, get_evaluation_from_output(output, limits.depth));
+			pair<string, int> p(moveString, get_evaluation_from_output(output, limits.depth));
 
-			move_evaluations.push_back(p);
+			moveEvaluations.push_back(p);
 		}
 
 		// restore cout's original buffer
 		cout.rdbuf(oldStringBuffer);
 
-		sort_move_evaluations(move_evaluations);
+		sort_move_evaluations(moveEvaluations);
 
-		return move_evaluations;
+		return moveEvaluations;
 	}
 
 	vector<pair<string, int>> get_move_evaluations_after_given_move(
@@ -238,30 +235,30 @@ namespace Utilities
 
 		make_move(pos, states, move);
 
-		vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
+		vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
 
 		set_position(pos, states, originalFen);
 
-		return move_evaluations;
+		return moveEvaluations;
 	}
 
 	int get_centipawn_loss(Position* pos, StateListPtr* states, string& token)
 	{
-		vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
+		vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
 
-		pair<string, int> bestMoveEval = move_evaluations[0];
-		pair<string, int> token_move_eval;
+		pair<string, int> bestMoveEval = moveEvaluations[0];
+		pair<string, int> tokenMoveEval;
 
-		for (pair<string, int> item : move_evaluations)
+		for (pair<string, int> item : moveEvaluations)
 		{
 			if (item.first == token)
 			{
-				token_move_eval = item;
+				tokenMoveEval = item;
 				break;
 			}
 		}
 
-		return bestMoveEval.second - token_move_eval.second;
+		return bestMoveEval.second - tokenMoveEval.second;
 	}
 
 #pragma endregion

@@ -103,28 +103,27 @@ void Test::log_piece_legal_moves()
 		cout << "no legal moves, it is checkmate" << endl;
 		return;
 	}
-	//TODO: the code above and below has been copied 3 times in 3 different functions
 	Square square = string_to_square(token);
 	Piece piece = get_piece_on_square(pos, square);
-	Color piece_color = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
+	Color pieceColor = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
 
-	if (pos->side_to_move() != piece_color)
+	if (pos->side_to_move() != pieceColor)
 	{
 		cout << "piece cannot move, it is not this color's turn yet" << endl;
 		return;
 	}
 
-	MoveList legal_moves = MoveList<LEGAL>(*pos);
-	int legal_move_count = 0;
+	MoveList legalMoves = MoveList<LEGAL>(*pos);
+	int legalMoveCount = 0;
 
-	for (ExtMove move : legal_moves)
+	for (ExtMove move : legalMoves)
 	{
-		if (from_sq(move) == square) legal_move_count++;
+		if (from_sq(move) == square) legalMoveCount++;
 	}
 
-	cout << "piece on " << token << " has " << legal_move_count << " legal moves:" << endl;
+	cout << "piece on " << token << " has " << legalMoveCount << " legal moves:" << endl;
 
-	for (ExtMove move : legal_moves)
+	for (ExtMove move : legalMoves)
 	{
 		if (from_sq(move) == square) cout << "\t" << move_to_string(move) << endl;
 	}
@@ -140,28 +139,28 @@ void Test::log_piece_captures()
 
 	Square square = string_to_square(token);
 	Piece piece = get_piece_on_square(pos, square);
-	Color piece_color = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
+	Color pieceColor = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
 
-	if (pos->side_to_move() != piece_color)
+	if (pos->side_to_move() != pieceColor)
 	{
 		cout << "piece cannot capture, it is not this color's turn yet" << endl;
 		return;
 	}
 
-	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	MoveList legalMoves = MoveList<LEGAL>(*pos);
 	MoveList captures = MoveList<CAPTURES>(*pos);
-	int capture_count = 0;
+	int captureCount = 0;
 
 	for (ExtMove move : captures)
 	{
-		if (from_sq(move) == square && legal_moves.contains(move)) capture_count++;
+		if (from_sq(move) == square && legalMoves.contains(move)) captureCount++;
 	}
 
-	cout << "piece on " << token << " has " << capture_count << " captures:" << endl;
+	cout << "piece on " << token << " has " << captureCount << " captures:" << endl;
 
 	for (ExtMove move : captures)
 	{
-		if (from_sq(move) == square && legal_moves.contains(move))
+		if (from_sq(move) == square && legalMoves.contains(move))
 			cout << "\t" << move_to_string(move) << endl;
 	}
 }
@@ -170,20 +169,20 @@ void Test::log_piece_is_pinned()
 {
 	Square square = string_to_square(token);
 	Piece piece = get_piece_on_square(pos, square);
-	Color piece_color = color_of(piece);
+	Color pieceColor = color_of(piece);
 
-	Bitboard block_board = pos->blockers_for_king(piece_color);
+	Bitboard blockBoard = pos->blockers_for_king(pieceColor);
 
-	bool is_pinned = block_board & square;
+	bool isPinned = blockBoard & square;
 
-	cout << "is piece absolute pinned? " << (is_pinned ? "yes" : "no") << endl;
+	cout << "is piece absolute pinned? " << (isPinned ? "yes" : "no") << endl;
 }
 
 void Test::log_piece_is_hanging()
 {
-	bool is_hanging = is_piece_hanging_on_square(pos, string_to_square(token));
+	bool isHanging = is_piece_hanging_on_square(pos, string_to_square(token));
 
-	cout << "is piece hanging? " << (is_hanging ? "yes" : "no") << endl;
+	cout << "is piece hanging? " << (isHanging ? "yes" : "no") << endl;
 }
 
 void Test::log_legal_moves_for_capturable_pieces()
@@ -196,9 +195,9 @@ void Test::log_legal_moves_for_capturable_pieces()
 
 	Square square = string_to_square(token);
 	Piece piece = get_piece_on_square(pos, square);
-	Color piece_color = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
+	Color pieceColor = (piece == NO_PIECE) ? COLOR_NB : color_of(piece);
 
-	if (pos->side_to_move() != piece_color)
+	if (pos->side_to_move() != pieceColor)
 	{
 		cout << "piece cannot capture, it is not this color's turn yet" << endl;
 		return;
@@ -206,16 +205,16 @@ void Test::log_legal_moves_for_capturable_pieces()
 
 	cout << "logging legal moves for capturable pieces" << endl;
 
-	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	MoveList legalMoves = MoveList<LEGAL>(*pos);
 	MoveList captures = MoveList<CAPTURES>(*pos);
 
 	change_side_to_move(pos, states);
 
 	for (ExtMove move : captures)
 	{
-		if (from_sq(move) == square && legal_moves.contains(move))
+		if (from_sq(move) == square && legalMoves.contains(move))
 		{
-			token = square_to_string(to_sq(move)); // HACK: we can edit token, last time it's used
+			token = square_to_string(to_sq(move)); // we can edit token, last time it's used
 			log_piece_legal_moves();
 		}
 	}
@@ -253,9 +252,9 @@ void Test::log_best_moves()
 		n = 10000;
 	}
 
-	vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
 
-	for (pair<string, int> item : move_evaluations)
+	for (pair<string, int> item : moveEvaluations)
 	{
 		if (n-- == 0) break;
 
@@ -280,14 +279,14 @@ void Test::log_threat_moves()
 		n = 10000;
 	}
 
-	vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
 
-	for (int i = move_evaluations.size() - 1; i >= 0; i--)
+	for (int i = moveEvaluations.size() - 1; i >= 0; i--)
 	{
 		if (n-- == 0) break;
 
-		cout << "\t" << move_evaluations[i].first << ": ";
-		cout << int_to_string_evaluation(move_evaluations[i].second) << endl;
+		cout << "\t" << moveEvaluations[i].first << ": ";
+		cout << int_to_string_evaluation(moveEvaluations[i].second) << endl;
 	}
 
 	if (n != 0) cout << "\tno more moves found" << endl;
@@ -349,9 +348,9 @@ void Test::log_move_is_hanging_capture()
 {
 	Move move = UCI::to_move(*pos, token);
 
-	bool is_hanging = is_piece_hanging_on_square(pos, to_sq(move));
+	bool isHanging = is_piece_hanging_on_square(pos, to_sq(move));
 
-	cout << ((is_hanging) ? "yes, does " : "no, does not ");
+	cout << ((isHanging) ? "yes, does " : "no, does not ");
 	cout << "capture a hanging piece on " << token[2] << token[3] << endl;
 }
 
@@ -386,21 +385,21 @@ void Test::log_does_allow_static_exchange_evaluation()
 	Move token_move = UCI::to_move(*pos, token);
 	make_move(pos, states, token_move);
 
-	MoveList legal_moves = MoveList<LEGAL>(*pos);
+	MoveList legalMoves = MoveList<LEGAL>(*pos);
 	MoveList captures = MoveList<CAPTURES>(*pos);
 
-	bool found_see = false;
+	bool foundMove = false;
 
 	for (ExtMove move : captures)
 	{
-		if (legal_moves.contains(move))
+		if (legalMoves.contains(move))
 		{
 			Value threshold = PawnValueMg;
 			if (pos->see_ge(move, threshold))
 			{
-				if (!found_see)
+				if (!foundMove)
 				{
-					found_see = true;
+					foundMove = true;
 					cout << "yes, the opponent can make a winning capture according to Static ";
 					cout << "Exchange Evaluation through any of these moves:" << endl;
 				}
@@ -409,7 +408,7 @@ void Test::log_does_allow_static_exchange_evaluation()
 		}
 	}
 
-	if (!found_see)
+	if (!foundMove)
 	{
 		cout << "no, move does not allow the opponent to make a winning capture ";
 		cout << "according to Static Exchange Evaluation" << endl;
@@ -419,56 +418,52 @@ void Test::log_does_allow_static_exchange_evaluation()
 
 void Test::log_does_permit_good_move()
 {
-	int permitCentipawnLoss = 200;
+	int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
 
 	int loss = get_centipawn_loss(pos, states, token);
 
-	if (loss >= permitCentipawnLoss)
-	{
-		cout << "yes, this move permits the following good moves: " << endl;
-
-		Move move = UCI::to_move(*pos, token);
-		int cp = get_move_evaluations(pos, states)[0].second;
-
-		vector<pair<string, int>> move_evaluations =
-			get_move_evaluations_after_given_move(pos, states, move);
-
-		for (pair<string, int> item : move_evaluations)
-		{
-			if (cp + item.second >= permitCentipawnLoss)
-			{
-				cout << "\t" << item.first << ": " << int_to_string_evaluation(-item.second) << endl;
-			}
-		}
-	}
-	else
+	if (loss < permitCentipawnLoss)
 	{
 		cout << "no, this move does not permit a good move" << endl;
+		return;
+	}
+
+	cout << "yes, this move permits the following good moves: " << endl;
+
+	Move token_move = UCI::to_move(*pos, token);
+	int cp = get_move_evaluations(pos, states)[0].second;
+
+	vector<pair<string, int>> moveEvaluations =
+		get_move_evaluations_after_given_move(pos, states, token_move);
+
+	for (pair<string, int> item : moveEvaluations)
+	{
+		if (cp + item.second >= permitCentipawnLoss)
+		{
+			cout << "\t" << item.first << ": " << int_to_string_evaluation(-item.second) << endl;
+		}
 	}
 }
 
 void Test::log_does_permit_good_move_by_undefending_square()
 {
 	cerr << "no implementation" << endl;
-	/* pseudocode
-	
-	does this move permit a good move? no? then return
+	return;
 
+	/* pseudocode
+
+	does this move permit a good move? no? then return
 	get all good moves that were allowed by this bad move
-		
+
 	foreach allowed good move
 		was its to_square previously defended before the bad move was made? no? go to next move
-
 		was this to_square previously under-defended? yes? go to next move
-
 		is this square now under-defended? no? go to next move
-
 		log yes
-
 	*/
 
 	bool foundMove = false;
-	int permitCentipawnLoss = 200;
+	int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
 
 	int loss = get_centipawn_loss(pos, states, token);
 
@@ -481,23 +476,32 @@ void Test::log_does_permit_good_move_by_undefending_square()
 	Move move = UCI::to_move(*pos, token);
 	int cp = get_move_evaluations(pos, states)[0].second;
 
-	vector<pair<string, int>> move_evaluations =
+	vector<pair<string, int>> moveEvaluations =
 		get_move_evaluations_after_given_move(pos, states, move);
 
-	for (pair<string, int> item : move_evaluations)
+	for (pair<string, int> item : moveEvaluations)
 	{
 		if (cp + item.second >= permitCentipawnLoss)
 		{
-			string square_string = item.first.substr(2, 1) + item.first.substr(3, 1);
-			Square square = string_to_square(square_string);
+			string squareString = item.first.substr(2, 1) + item.first.substr(3, 1);
+			Square square = string_to_square(squareString);
 
 			// the square has to be previously defended
 			if (is_square_attacked_by_color(pos, square, pos->side_to_move())) continue;
 
 			// the square can't already be under-defended
-			if (is_square_under_defended(square)) continue;
+			if (is_square_under_defended(pos, square, pos->side_to_move())) continue;
 
-			if (is_square_under_defended(square)) continue;
+			// this square has to be now under-defended
+			string originalFen = pos->fen();
+			Move tokenMove = UCI::to_move(*pos, token);
+			make_move(pos, states, tokenMove);
+			if (is_square_under_defended(pos, square, ~pos->side_to_move()))
+			{
+				set_position(pos, states, originalFen);
+				continue;
+			}
+			set_position(pos, states, originalFen);
 
 			if (!foundMove)
 			{
@@ -505,11 +509,9 @@ void Test::log_does_permit_good_move_by_undefending_square()
 				cout << "yes, this move permits the following good moves:" << endl;
 			}
 
-			cout << "\t" << item.first << " after " << square_string << " is undefended" << endl;
+			cout << "\t" << item.first << " after " << squareString << " is undefended" << endl;
 		}
 	}
-
-
 }
 
 #pragma endregion

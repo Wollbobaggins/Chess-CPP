@@ -49,10 +49,12 @@ To run the test, compile the program into an executable and run it from the comm
 	
 ## Evaluation
 
-#### Number of Objectives Achieved: X / 13
+#### Number of Objectives Achieved: 12 / 13
 
-We'll get to this description later...
+Shoot, so close! I was super close to finishing all the tasks, but I certainly underestimated how long the last two objectives would take. Again, I feel that my progress was not ideal and if only I had another day to look a the problems that popped up, finishing this test would have been doable. Unlike last time, I was unable to work the entire allotted period. My family has been in the process of moving this week and squeezing time to work on the project before Friday was a little challenging. Hopefully, in the future, I will be much more prepared to work with UCI Chess engines as I certainly felt more familiar with the application the second time around working with it.
+
+While all tasks work as intended, the last two tasks were not up to par. I couldn't figure out how to set the position of Stockfish's internal Bitboard, and then roll back to a previous position without having complications. As a result, the final task I was unable to complete due to the issues that surrounded the aforementioned problem. I still firmly believe that the concepts in programming this test are achievable given a little more source knowledge.
 
 ## Final Notes
 
-We'll get to this description later...
+Again, thank you so much for the opportunity and chance to work with Chess.com. This was incredibly exciting for me as the prospect of working with my favorite company and my favorite pastime was just awesome. I definitely feel much more prepared to work with chess engines in the future!
