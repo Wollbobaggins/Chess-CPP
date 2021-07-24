@@ -453,13 +453,17 @@ void Test::log_does_permit_good_move_by_undefending_square()
 	/* pseudocode
 
 	does this move permit a good move? no? then return
+
 	get all good moves that were allowed by this bad move
 
 	foreach allowed good move
-		was its to_square previously defended before the bad move was made? no? go to next move
-		was this to_square previously under-defended? yes? go to next move
-		is this square now under-defended? no? go to next move
-		log yes
+		was its to_square previously defended before the bad move was made? no? continue to next move
+
+		was this to_square previously under-defended? yes? continue to next move
+
+		is this square now under-defended? no? continue to next move
+
+		success, log move
 	*/
 
 	bool foundMove = false;
