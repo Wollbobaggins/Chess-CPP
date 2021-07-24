@@ -63,6 +63,6 @@ private:
 	void log_is_winning_static_exchange_evaluation(); // Move Function Idea 3
 	void log_does_allow_static_exchange_evaluation(); // Move Function Idea 4
 	void log_does_permit_good_move(); // Move Function Idea 5
-	void log_does_permit_good_move_on_square(); // Move Function Idea 6
+	void log_does_permit_good_move_by_undefending_square(); // Move Function Idea 6
 };
 

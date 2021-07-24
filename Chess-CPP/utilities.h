@@ -151,6 +151,12 @@ namespace Utilities
 		pos->do_move(move, (*states)->back());
 	}
 
+	bool is_square_attacked_by_color(Position* pos, Square square, Color color)
+	{
+		// does this color's pieces overlap on these attacked squares
+		return pos->pieces(color) & pos->attackers_to(square);
+	}
+
 	bool is_piece_hanging_on_square(Position* pos, Square square)
 	{
 		Piece piece = get_piece_on_square(pos, square);
@@ -158,14 +164,23 @@ namespace Utilities
 
 		Color piece_color = color_of(piece);
 
-		Bitboard ally_piece_board = pos->pieces(piece_color);
-		Bitboard enemy_piece_board = pos->pieces(~piece_color);
-		Bitboard attack_board = pos->attackers_to(square);
-
-		bool is_defended = ally_piece_board & attack_board;
-		bool is_attacked = enemy_piece_board & attack_board;
+		bool is_defended = is_square_attacked_by_color(pos, square, piece_color);
+		bool is_attacked = is_square_attacked_by_color(pos, square, ~piece_color);
 
 		return !is_defended && is_attacked;
+	}
+
+	//bool does_piece_attack_square(asdasd)
+	//{
+
+	//}
+
+	bool is_square_under_defended(Position* pos, Square square, Color color)
+	{
+		// count how many attackers there are vs defenders
+
+		// return true if there are more attackers than defenders
+		return false;
 	}
 
 #pragma endregion
@@ -179,7 +194,7 @@ namespace Utilities
 		string move_string;
 
 		Search::LimitsType limits;
-		limits.depth = 5; // HACK: hardcoded depth for engine
+		limits.depth = 3; // HACK: hardcoded depth for engine (shortens time)
 
 		// create a new stringbuf for the threads & associate with std::cout
 		stringbuf stringBuffer(ios::out);
@@ -216,7 +231,7 @@ namespace Utilities
 		return move_evaluations;
 	}
 
-	pair<string, int> get_best_move_evaluation_after_given_move(
+	vector<pair<string, int>> get_move_evaluations_after_given_move(
 		Position* pos, StateListPtr* states, Move move)
 	{
 		string originalFen = pos->fen();
@@ -227,13 +242,12 @@ namespace Utilities
 
 		set_position(pos, states, originalFen);
 
-		return move_evaluations[0];
+		return move_evaluations;
 	}
 
 	int get_centipawn_loss(Position* pos, StateListPtr* states, string& token)
 	{
 		vector<pair<string, int>> move_evaluations = get_move_evaluations(pos, states);
-		sort_move_evaluations(move_evaluations);
 
 		pair<string, int> bestMoveEval = move_evaluations[0];
 		pair<string, int> token_move_eval;
@@ -249,8 +263,6 @@ namespace Utilities
 
 		return bestMoveEval.second - token_move_eval.second;
 	}
-
-
 
 #pragma endregion
 
