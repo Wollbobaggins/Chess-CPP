@@ -40,12 +40,12 @@ To run the test, compile the program into an executable and run it from the comm
 
 #### Help Menu
 ```test```
-```
-here is a list of availble commands for test:
-	test piece -arg : a square in FILE/RANK form
-	test position -arg : number of moves to display
-	test move -arg : a move in FILE/RANK/FILE/RANK form
-```
+	```
+	here is a list of availble commands for test:
+		test piece -arg : a square in FILE/RANK form
+		test position -arg : number of moves to display
+		test move -arg : a move in FILE/RANK/FILE/RANK form
+	```
 
 #### Piece Function Ideas 
 ```test piece e4```
