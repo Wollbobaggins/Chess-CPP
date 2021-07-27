@@ -14,7 +14,8 @@ void Test::run(Position& _pos, istringstream& _is, StateListPtr& _states)
 
 	if (read_next_token())
 	{
-		if (token == "piece") run_piece_function_ideas();
+		if (token == "settings") cout << "settings menu not yet implemented" << endl;
+		else if (token == "piece") run_piece_function_ideas();
 		else if (token == "position") run_position_function_ideas();
 		else if (token == "move") run_move_function_ideas();
 		else
@@ -338,9 +339,11 @@ bool Test::is_move_token_valid()
 
 void Test::log_move_centipawn_loss()
 {
-	int loss = get_centipawn_loss(pos, states, token);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
+	int loss = get_centipawn_loss(moveEvaluations, token);
 
 	if (loss == 0) cout << "no centipawn loss, bestmove found by engine" << endl;
+	else if (abs(loss) >= VALUE_INFINITE)  cout << "massive centipawn loss, missed mate!" << endl;
 	else cout << "centipawn loss of " << loss << endl;
 }
 
@@ -420,9 +423,9 @@ void Test::log_does_permit_good_move()
 {
 	int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
 
-	int loss = get_centipawn_loss(pos, states, token);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
 
-	if (loss < permitCentipawnLoss)
+	if (get_centipawn_loss(moveEvaluations, token) < permitCentipawnLoss)
 	{
 		cout << "no, this move does not permit a good move" << endl;
 		return;
@@ -431,18 +434,20 @@ void Test::log_does_permit_good_move()
 	cout << "yes, this move permits the following good moves: " << endl;
 
 	Move token_move = UCI::to_move(*pos, token);
-	int cp = get_move_evaluations(pos, states)[0].second;
+	vector<pair<string, int>>  nextMoveEvaluations = get_move_evaluations_after_given_move(pos, states, token_move);
 
-	vector<pair<string, int>> moveEvaluations =
-		get_move_evaluations_after_given_move(pos, states, token_move);
+	int positionEvaluation = moveEvaluations[0].second;
+	int nextPositionEvaluation = nextMoveEvaluations[0].second;
 
-	for (pair<string, int> item : moveEvaluations)
+	for (pair<string, int> item : nextMoveEvaluations)
 	{
-		if (cp + item.second >= permitCentipawnLoss)
+		if (positionEvaluation + item.second >= permitCentipawnLoss 
+			&& nextPositionEvaluation - item.second <= permitCentipawnLoss)
 		{
 			cout << "\t" << item.first << ": " << int_to_string_evaluation(-item.second) << endl;
 		}
 	}
+
 }
 
 void Test::log_does_permit_good_move_by_undefending_square()
@@ -466,56 +471,56 @@ void Test::log_does_permit_good_move_by_undefending_square()
 		success, log move
 	*/
 
-	bool foundMove = false;
-	int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
+	// bool foundMove = false;
+	// int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
 
-	int loss = get_centipawn_loss(pos, states, token);
+	// int loss = get_centipawn_loss(pos, states, token);
 
-	if (loss < permitCentipawnLoss)
-	{
-		cout << "no, move does not permit a good move, by undefending a specific square" << endl;
-		return;
-	}
+	// if (loss < permitCentipawnLoss)
+	// {
+	// 	cout << "no, move does not permit a good move, by undefending a specific square" << endl;
+	// 	return;
+	// }
 
-	Move move = UCI::to_move(*pos, token);
-	int cp = get_move_evaluations(pos, states)[0].second;
+	// Move move = UCI::to_move(*pos, token);
+	// int cp = get_move_evaluations(pos, states)[0].second;
 
-	vector<pair<string, int>> moveEvaluations =
-		get_move_evaluations_after_given_move(pos, states, move);
+	// vector<pair<string, int>> moveEvaluations =
+	// 	get_move_evaluations_after_given_move(pos, states, move);
 
-	for (pair<string, int> item : moveEvaluations)
-	{
-		if (cp + item.second >= permitCentipawnLoss)
-		{
-			string squareString = item.first.substr(2, 1) + item.first.substr(3, 1);
-			Square square = string_to_square(squareString);
+	// for (pair<string, int> item : moveEvaluations)
+	// {
+	// 	if (cp + item.second >= permitCentipawnLoss)
+	// 	{
+	// 		string squareString = item.first.substr(2, 1) + item.first.substr(3, 1);
+	// 		Square square = string_to_square(squareString);
 
-			// the square has to be previously defended
-			if (is_square_attacked_by_color(pos, square, pos->side_to_move())) continue;
+	// 		// the square has to be previously defended
+	// 		if (is_square_attacked_by_color(pos, square, pos->side_to_move())) continue;
 
-			// the square can't already be under-defended
-			if (is_square_under_defended(pos, square, pos->side_to_move())) continue;
+	// 		// the square can't already be under-defended
+	// 		if (is_square_under_defended(pos, square, pos->side_to_move())) continue;
 
-			// this square has to be now under-defended
-			string originalFen = pos->fen();
-			Move tokenMove = UCI::to_move(*pos, token);
-			make_move(pos, states, tokenMove);
-			if (is_square_under_defended(pos, square, ~pos->side_to_move()))
-			{
-				set_position(pos, states, originalFen);
-				continue;
-			}
-			set_position(pos, states, originalFen);
+	// 		// this square has to be now under-defended
+	// 		string originalFen = pos->fen();
+	// 		Move tokenMove = UCI::to_move(*pos, token);
+	// 		make_move(pos, states, tokenMove);
+	// 		if (is_square_under_defended(pos, square, ~pos->side_to_move()))
+	// 		{
+	// 			set_position(pos, states, originalFen);
+	// 			continue;
+	// 		}
+	// 		set_position(pos, states, originalFen);
 
-			if (!foundMove)
-			{
-				foundMove = true;
-				cout << "yes, this move permits the following good moves:" << endl;
-			}
+	// 		if (!foundMove)
+	// 		{
+	// 			foundMove = true;
+	// 			cout << "yes, this move permits the following good moves:" << endl;
+	// 		}
 
-			cout << "\t" << item.first << " after " << squareString << " is undefended" << endl;
-		}
-	}
+	// 		cout << "\t" << item.first << " after " << squareString << " is undefended" << endl;
+	// 	}
+	// }
 }
 
 #pragma endregion

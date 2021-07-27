@@ -48,6 +48,7 @@ namespace Utilities
 			if (s == ' ') return output;
 			output += s;
 		}
+		return output;
 	}
 
 	int get_evaluation_from_output(string& output, int depth)
@@ -194,7 +195,7 @@ namespace Utilities
 		string moveString;
 
 		Search::LimitsType limits;
-		limits.depth = 5; // HACK: hardcoded depth for engine (shortens time)
+		limits.depth = 8; // HACK: hardcoded depth for engine (shortens time)
 
 		// create a new stringbuf for the threads & associate with std::cout
 		stringbuf stringBuffer(ios::out);
@@ -245,23 +246,17 @@ namespace Utilities
 		return moveEvaluations;
 	}
 
-	int get_centipawn_loss(Position* pos, StateListPtr* states, string& token)
+	int get_centipawn_loss(vector<pair<string, int>>& moveEvaluations, string& token)
 	{
-		vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
-
-		pair<string, int> bestMoveEval = moveEvaluations[0];
-		pair<string, int> tokenMoveEval;
-
 		for (pair<string, int> item : moveEvaluations)
 		{
-			if (item.first == token)
-			{
-				tokenMoveEval = item;
-				break;
-			}
+			if (item.first != token) continue;
+
+			return moveEvaluations[0].second - item.second;
 		}
 
-		return bestMoveEval.second - tokenMoveEval.second;
+		cerr << "token is invalid" << endl;
+		return 0;
 	}
 
 #pragma endregion
