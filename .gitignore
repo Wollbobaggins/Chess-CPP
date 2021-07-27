@@ -42,3 +42,5 @@ src/.depend
 src/stockfish*
 src/-lstdc++.res
 
+# Mac specific files
+.DS_Store

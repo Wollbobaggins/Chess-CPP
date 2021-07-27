@@ -145,7 +145,10 @@ namespace Utilities
 
 	void make_move(Position* pos, StateListPtr* states, Move move)
 	{
-		(*states) = StateListPtr(new deque<StateInfo>(1));
+		string fen = pos->fen();
+		set_position(pos, states, fen);
+		// (*states) = StateListPtr(new deque<StateInfo>(1)); // HACK: delete this line
+
 		(*states)->emplace_back();
 		pos->do_move(move, (*states)->back());
 	}
@@ -191,7 +194,7 @@ namespace Utilities
 		string moveString;
 
 		Search::LimitsType limits;
-		limits.depth = 3; // HACK: hardcoded depth for engine (shortens time)
+		limits.depth = 5; // HACK: hardcoded depth for engine (shortens time)
 
 		// create a new stringbuf for the threads & associate with std::cout
 		stringbuf stringBuffer(ios::out);
@@ -281,28 +284,6 @@ namespace Utilities
 		s += "  a   b   c   d   e   f   g   h\n";
 
 		cout << s << endl;
-	}
-
-	string exec(string command) {
-		char buffer[128];
-		string result = "";
-
-		// Open pipe to file
-		FILE* pipe = _popen(command.c_str(), "r");
-		if (!pipe) {
-			return "_popen failed!";
-		}
-
-		// read till end of process:
-		while (!feof(pipe)) {
-
-			// use buffer to read and add to result
-			if (fgets(buffer, 128, pipe) != NULL)
-				result += buffer;
-		}
-
-		_pclose(pipe);
-		return result;
 	}
 
 #pragma endregion
