@@ -24,6 +24,7 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [x] (4) does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
 - [x] (5) does this move *permit* the opponent to play a good move?
 - [ ] (6) does this move *permit* the opponent to play a good move, by undefending a specific square?
+- [x] (+) does this move create discovered attacks?
 
 ## Execution
 

@@ -184,6 +184,31 @@ namespace Utilities
 		return false;
 	}
 
+	vector<ExtMove> get_discovered_attacks_after_move(
+		Position* pos, StateListPtr* states, Move move)
+	{
+		vector<ExtMove> discoveredAttacks;
+		string originalFen = pos->fen();
+
+		MoveList captures = MoveList<CAPTURES>(*pos);
+
+		make_move(pos, states, move);
+		change_side_to_move(pos, states);
+
+		MoveList newCaptures = MoveList<CAPTURES>(*pos);
+
+		set_position(pos, states, originalFen);
+
+		for (ExtMove move : newCaptures)
+		{
+			if (captures.contains(move) || from_sq(move) == to_sq(move)) continue;
+
+			discoveredAttacks.push_back(move);
+		}
+		
+		return discoveredAttacks;
+	}
+
 #pragma endregion
 
 #pragma region Engine Functions
@@ -232,20 +257,6 @@ namespace Utilities
 		return moveEvaluations;
 	}
 
-	vector<pair<string, int>> get_move_evaluations_after_given_move(
-		Position* pos, StateListPtr* states, Move move)
-	{
-		string originalFen = pos->fen();
-
-		make_move(pos, states, move);
-
-		vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
-
-		set_position(pos, states, originalFen);
-
-		return moveEvaluations;
-	}
-
 	int get_centipawn_loss(vector<pair<string, int>>& moveEvaluations, string& token)
 	{
 		for (pair<string, int> item : moveEvaluations)
@@ -259,26 +270,39 @@ namespace Utilities
 		return 0;
 	}
 
+	vector<pair<string, int>> get_permitted_good_moves(Position* pos, StateListPtr* states,
+		vector<pair<string, int>>& moveEvaluations, int permitCentipawnLoss, Move move)
+	{
+		string originalFen = pos->fen();
+
+		make_move(pos, states, move);
+
+		vector<pair<string, int>>  nextMoveEvaluations = get_move_evaluations(pos, states);
+
+		set_position(pos, states, originalFen);
+
+		int positionEvaluation = moveEvaluations[0].second;
+		int nextPositionEvaluation = nextMoveEvaluations[0].second;
+
+		for (int i = nextMoveEvaluations.size(); i >= 0; i--)
+		{
+			if (positionEvaluation + nextMoveEvaluations[i].second >= permitCentipawnLoss 
+				&& nextPositionEvaluation - nextMoveEvaluations[i].second <= permitCentipawnLoss) 
+				continue;
+
+			nextMoveEvaluations.erase(nextMoveEvaluations.begin() + i);
+		}
+
+		return nextMoveEvaluations;
+	} 
+
 #pragma endregion
 
 #pragma region Debug Functions
 
 	void debug_log_bitboard(Bitboard b)
 	{
-		// this function has been copied from Bitboard::pretty
-
-		std::string s = "+---+---+---+---+---+---+---+---+\n";
-
-		for (Rank r = RANK_8; r >= RANK_1; --r)
-		{
-			for (File f = FILE_A; f <= FILE_H; ++f)
-				s += b & make_square(f, r) ? "| X " : "|   ";
-
-			s += "| " + std::to_string(1 + r) + "\n+---+---+---+---+---+---+---+---+\n";
-		}
-		s += "  a   b   c   d   e   f   g   h\n";
-
-		cout << s << endl;
+		cout << Bitboards::pretty(b) << endl;
 	}
 
 #pragma endregion
