@@ -14,10 +14,11 @@ void Test::run(Position& _pos, istringstream& _is, StateListPtr& _states)
 
 	if (read_next_token())
 	{
-		if (token == "settings") cout << "settings menu not yet implemented" << endl;
+		if (token == "settings") set_settings();
 		else if (token == "piece") run_piece_function_ideas();
 		else if (token == "position") run_position_function_ideas();
 		else if (token == "move") run_move_function_ideas();
+		else if (token == "tests") run_tests();
 		else
 		{
 			cout << "Unknown command: " << token << endl;
@@ -32,6 +33,8 @@ void Test::run(Position& _pos, istringstream& _is, StateListPtr& _states)
 
 bool Test::read_next_token()
 {
+	token = "";
+
 	*is >> token;
 
 	return !token.empty();
@@ -39,11 +42,51 @@ bool Test::read_next_token()
 
 void Test::log_help()
 {
-	cout << "here is a list of availble commands for test:" << endl;
+	cout << "here is a list of available commands for test:" << endl;
 
+	cout << "\ttest settings -args : set the following options..." << endl;
+	cout << "\t\tdepth -arg : how deep for the engine to search" << endl;
+	cout << "\t\tsee -arg : threshold for winning static exchange evaluation" << endl;
+	cout << "\t\tpermit -arg : centipawn permit difference to be classified as good move" << endl;
+	cout << "\t\treset : restores settings to defaults" << endl;
 	cout << "\ttest piece -arg : a square in FILE/RANK form" << endl;
 	cout << "\ttest position -arg : number of moves to display" << endl;
 	cout << "\ttest move -arg : a move in FILE/RANK/FILE/RANK form" << endl;
+	cout << endl;
+
+	log_settings();
+}
+
+void Test::set_settings()
+{
+	while (read_next_token())
+	{
+		string str = token;
+		read_next_token();
+
+		if (str == "depth") depth = stoi(token);
+		else if (str == "see") threshold = Value(stoi(token));
+		else if (str == "permit") permitCentipawnLoss = stoi(token);
+		else if (str == "reset")
+		{
+			depth = 5;
+			threshold = PawnValueMg;
+			permitCentipawnLoss = 200;
+		}
+		else cout << "unrecognized argument: " << token << ", please check help menu" << endl;
+	} 
+
+	log_settings();
+}
+
+void Test::log_settings()
+{
+	cout << "current settings:" << endl;
+
+	cout << "\tdepth: " << depth << endl;
+	cout << "\tstatic exchange threshold: " << threshold << endl;
+	cout << "\tcentipawn permit difference: " << permitCentipawnLoss << endl;
+	cout << endl;
 }
 
 #pragma endregion
@@ -70,6 +113,8 @@ void Test::run_piece_function_ideas()
 
 	cout << "(5) "; // Piece Function Idea 5
 	log_legal_moves_for_capturable_pieces(); 
+
+	cout << endl;
 } 
 
 bool Test::is_piece_token_valid()
@@ -237,6 +282,8 @@ void Test::run_position_function_ideas()
 
 	cout << "(2) "; // Position Function Idea 2
 	log_threat_moves();
+
+	cout << endl;
 }
 
 void Test::log_best_moves()
@@ -254,7 +301,7 @@ void Test::log_best_moves()
 		n = 10000;
 	}
 
-	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states, depth);
 
 	for (pair<string, int> item : moveEvaluations)
 	{
@@ -281,7 +328,7 @@ void Test::log_threat_moves()
 		n = 10000;
 	}
 
-	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states, depth);
 
 	for (int i = moveEvaluations.size() - 1; i >= 0; i--)
 	{
@@ -324,6 +371,8 @@ void Test::run_move_function_ideas()
 
 	cout << "(+) "; // Additional Move Function Idea
 	log_is_move_discovered_attack();
+
+	cout << endl;
 }
 
 bool Test::is_move_token_valid()
@@ -343,7 +392,7 @@ bool Test::is_move_token_valid()
 
 void Test::log_move_centipawn_loss()
 {
-	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states, depth);
 	int loss = get_centipawn_loss(moveEvaluations, token);
 
 	if (loss == 0) cout << "no centipawn loss, bestmove found by engine" << endl;
@@ -376,7 +425,6 @@ void Test::log_is_winning_static_exchange_evaluation()
 		return;
 	}
 
-	Value threshold;
 	if (pos->see_ge(move, threshold))
 	{
 		cout << "yes, according to Static Exchange Evaluation, this is a winning capture" << endl;
@@ -392,8 +440,8 @@ void Test::log_does_allow_static_exchange_evaluation()
 {
 	string originalFen = pos->fen();
 
-	Move token_move = UCI::to_move(*pos, token);
-	make_move(pos, states, token_move);
+	Move tokenMove = UCI::to_move(*pos, token);
+	make_move(pos, states, tokenMove);
 
 	MoveList legalMoves = MoveList<LEGAL>(*pos);
 	MoveList captures = MoveList<CAPTURES>(*pos);
@@ -404,7 +452,6 @@ void Test::log_does_allow_static_exchange_evaluation()
 	{
 		if (legalMoves.contains(move))
 		{
-			Value threshold = PawnValueMg;
 			if (pos->see_ge(move, threshold))
 			{
 				if (!foundMove)
@@ -428,9 +475,7 @@ void Test::log_does_allow_static_exchange_evaluation()
 
 void Test::log_does_permit_good_move()
 {
-	int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
-
-	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states, depth);
 
 	if (get_centipawn_loss(moveEvaluations, token) < permitCentipawnLoss)
 	{
@@ -440,12 +485,12 @@ void Test::log_does_permit_good_move()
 
 	bool foundMove = false;
 
-	Move token_move = UCI::to_move(*pos, token);
+	Move tokenMove = UCI::to_move(*pos, token);
 
-	vector<pair<string, int>> permitted_good_moves = get_permitted_good_moves(
-		pos, states, moveEvaluations, permitCentipawnLoss, token_move);
+	vector<pair<string, int>> permittedGoodMoves = get_permitted_good_moves(
+		pos, states, depth, moveEvaluations, permitCentipawnLoss, tokenMove);
 
-	for (pair<string, int> item : permitted_good_moves)
+	for (pair<string, int> item : permittedGoodMoves)
 	{
 		if (!foundMove)
 		{
@@ -461,9 +506,8 @@ void Test::log_does_permit_good_move()
 void Test::log_does_permit_good_move_by_undefending_square()
 {
 	bool foundMove = false;
-	int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
 
-	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states);
+	vector<pair<string, int>> moveEvaluations = get_move_evaluations(pos, states, depth);
 
 	if (get_centipawn_loss(moveEvaluations, token) < permitCentipawnLoss)
 	{
@@ -475,10 +519,10 @@ void Test::log_does_permit_good_move_by_undefending_square()
 	Color color = pos->side_to_move();
 	Move tokenMove = UCI::to_move(*pos, token);
 
-	vector<pair<string, int>> permitted_good_moves = get_permitted_good_moves(
-		pos, states, moveEvaluations, permitCentipawnLoss, tokenMove);
+	vector<pair<string, int>> permittedGoodMoves = get_permitted_good_moves(
+		pos, states, depth, moveEvaluations, permitCentipawnLoss, tokenMove);
 
-	for (pair<string, int> item : permitted_good_moves)
+	for (pair<string, int> item : permittedGoodMoves)
 	{	
 		Square square = string_to_to_square(item.first);
 
@@ -501,6 +545,12 @@ void Test::log_does_permit_good_move_by_undefending_square()
 		cout << "\t" << item.first << " after " << square_to_string(square);
 		cout << " is undefended" << endl;
 	}
+
+	if (!foundMove)
+	{
+		cout << "no, this move does not permit a good move ";
+		cout << "by undefending a specific square" << endl;
+	}
 }
 
 void Test::log_is_move_discovered_attack()
@@ -522,5 +572,90 @@ void Test::log_is_move_discovered_attack()
 		cout << "\t" << move_to_string(move) << endl;
 	}
 }
+
+#pragma endregion
+
+#pragma region Test Functions
+
+void Test::run_all_functions(string& pieceToken, string& positionToken, string& moveToken)
+{
+	cout << "Executing Piece Function Test" << endl;
+	token = pieceToken;
+
+	cout << "(1) "; // Piece Function Idea 1
+	log_piece_legal_moves(); 
+
+	cout << "(2) "; // Piece Function Idea 2
+	log_piece_captures(); 
+
+	cout << "(3) "; // Piece Function Idea 3
+	log_piece_is_pinned(); 
+
+	cout << "(4) "; // Piece Function Idea 4
+	log_piece_is_hanging(); 
+
+	cout << "(5) "; // Piece Function Idea 5
+	log_legal_moves_for_capturable_pieces(); 
+
+	cout << endl;
+
+	cout << "Executing Position Function Test" << endl;
+	token = positionToken;
+
+	cout << "(1) "; // Position Function Idea 1
+	log_best_moves();
+
+	cout << "(2) "; // Position Function Idea 2
+	log_threat_moves();
+
+	cout << endl;
+
+	cout << "Executing Move Function Test" << endl;
+	token = moveToken;
+
+	cout << "(1) "; // Move Function Idea 1
+	log_move_centipawn_loss();
+
+	cout << "(2) "; // Move Function Idea 2
+	log_move_is_hanging_capture();
+
+	cout << "(3) "; // Move Function Idea 3
+	log_is_winning_static_exchange_evaluation();
+
+	cout << "(4) "; // Move Function Idea 4
+	log_does_allow_static_exchange_evaluation();
+
+	cout << "(5) "; // Move Function Idea 5
+	log_does_permit_good_move();
+
+	cout << "(6) "; // Move Function Idea 6
+	log_does_permit_good_move_by_undefending_square();
+
+	cout << "(+) "; // Additional Move Function Idea
+	log_is_move_discovered_attack();
+
+	cout << endl;
+}
+
+void Test::run_tests()
+{
+	test_double_scholars_mate_position();
+}
+
+void Test::test_double_scholars_mate_position()
+{
+	string fen = "rnb2knr/pppp1ppp/8/2b1p2Q/2B1P2q/8/PPPP1PPP/RNB2KNR w KQkq - 0 1";
+
+	set_position(pos, states, fen);
+
+	cout << *pos << endl;
+
+	string pieceToken = "h5";
+	string positionToken = "5";
+	string moveToken = "h5g4"; 
+
+	run_all_functions(pieceToken, positionToken, moveToken);
+}
+
 
 #pragma endregion

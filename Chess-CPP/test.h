@@ -30,9 +30,15 @@ private:
 	StateListPtr* states;
 	string token;
 
+	int depth = 5; // how deep for the engine to search
+	Value threshold = PawnValueMg; // for static exchange evaluation
+	int permitCentipawnLoss = 200; // centipawn permit difference to be classified as good move
+
 	// foundational functions
 	bool read_next_token();
 	void log_help();
+	void set_settings();
+	void log_settings();
 	
 	// piece functions
 	void run_piece_function_ideas();
@@ -58,5 +64,12 @@ private:
 	void log_does_permit_good_move(); // Move Function Idea 5
 	void log_does_permit_good_move_by_undefending_square(); // Move Function Idea 6
 	void log_is_move_discovered_attack(); // Additional Move Function Idea 
+
+	// test functions
+	void run_all_functions(string& pieceToken, string& positionToken, string& moveToken);
+	void run_tests();
+	void test_double_scholars_mate_position();
+
+
 };
 

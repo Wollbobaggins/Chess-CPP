@@ -224,14 +224,14 @@ namespace Utilities
 
 #pragma region Engine Functions
 
-	vector<pair<string, int>> get_move_evaluations(Position* pos, StateListPtr* states)
+	vector<pair<string, int>> get_move_evaluations(Position* pos, StateListPtr* states, int depth)
 	{
 		MoveList legalMoves = MoveList<LEGAL>(*pos);
 		vector<pair<string, int>> moveEvaluations;
 		string moveString;
 
 		Search::LimitsType limits;
-		limits.depth = 8; // HACK: hardcoded depth for engine (shortens time)
+		limits.depth = depth; 
 
 		// create a new stringbuf for the threads & associate with std::cout
 		stringbuf stringBuffer(ios::out);
@@ -281,21 +281,21 @@ namespace Utilities
 		return 0;
 	}
 
-	vector<pair<string, int>> get_permitted_good_moves(Position* pos, StateListPtr* states,
-		vector<pair<string, int>>& moveEvaluations, int permitCentipawnLoss, Move move)
+	vector<pair<string, int>> get_permitted_good_moves(Position* pos, StateListPtr* states, 
+		int depth, vector<pair<string, int>>& moveEvaluations, int permitCentipawnLoss, Move move)
 	{
 		string originalFen = pos->fen();
 
 		make_move(pos, states, move);
 
-		vector<pair<string, int>>  nextMoveEvaluations = get_move_evaluations(pos, states);
+		vector<pair<string, int>>  nextMoveEvaluations = get_move_evaluations(pos, states, depth);
 
 		set_position(pos, states, originalFen);
 
 		int positionEvaluation = moveEvaluations[0].second;
 		int nextPositionEvaluation = nextMoveEvaluations[0].second;
 
-		for (int i = nextMoveEvaluations.size(); i >= 0; i--)
+		for (int i = nextMoveEvaluations.size() - 1; i >= 0; i--)
 		{
 			if (positionEvaluation + nextMoveEvaluations[i].second >= permitCentipawnLoss 
 				&& nextPositionEvaluation - nextMoveEvaluations[i].second <= permitCentipawnLoss) 
