@@ -30,7 +30,8 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 
 This repository mostly consists of Stockfish source code, which can be found here: https://github.com/official-stockfish/Stockfish. The only files that were edited/created outside of this repository are the following:
 
-```- uci.cpp``` : edited on line 238 & line 291, added command line function "test -args"
+```- uci.cpp``` 
+: edited on line 238 & line 291, added command line function "test -args"
 ```- movegen.cpp```	: edited on line 238, removed assertion when color is in check
 ```- test.h``` : added file
 ```- test.cpp``` : added file
@@ -50,6 +51,7 @@ here is a list of available commands for test:
 	test piece -arg : a square in FILE/RANK form
 	test position -arg : number of moves to display
 	test move -arg : a move in FILE/RANK/FILE/RANK form
+	test tests : runs four tests outputting the functionality of this program 
 
 current settings:
 	depth: 8
@@ -100,11 +102,18 @@ current settings:
 (6) no, this move does not permit a good move by undefending a specific square
 (+) no, move is not a discovered attack
 ```
+#### Run Test for All Functions
+```test tests```
+```
+runs an amalgam of the previous functions and various positions
+```
 ## Evaluation
 
 #### Number of Objectives Achieved: 14 / 13
 
-we'll rewrite this soon...
+The previous rendition of the project definitely needed a couple of patches. Most notably, the permit functions needed to be reviewed as they were a little incorrect before. It was really challenging figuring out a correct way to represent a move that allowed for a good, counter-attack while leaving a square undefended. I eventually figured out that simply using Static Exchange Evaluation on the current position as well as the next position, correctly handled both discovery attacks as well as the defending history of a square.
+
+My code is a bit rough around the edges. With code redundantly written and poor class architecture, it's safe to say that writing the program was a tad rushed. My project is definitely focused on functionality over efficiency. In the event that I had more time to work on the project or a similar task like this in the future, it would certainly be a priority to balance all aspects of software engineering. 
 
 ## Final Notes
 

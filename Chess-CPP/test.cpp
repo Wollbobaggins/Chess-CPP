@@ -52,6 +52,7 @@ void Test::log_help()
 	cout << "\ttest piece -arg : a square in FILE/RANK form" << endl;
 	cout << "\ttest position -arg : number of moves to display" << endl;
 	cout << "\ttest move -arg : a move in FILE/RANK/FILE/RANK form" << endl;
+	cout << "\ttest tests : runs four tests outputting the functionality of this program" << endl;
 	cout << endl;
 
 	log_settings();
