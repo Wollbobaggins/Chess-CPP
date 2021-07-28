@@ -38,16 +38,7 @@ This repository mostly consists of Stockfish source code, which can be found her
 | test.cpp | added file |
 | utilities.h | added file |
 
-```- ```	e
-	> 
-```- ``` 
-	> 
-```- ``` 
-	> 
-```- ```	
-	> 
-	
-To run the test, compile the program into an executable and run it from the command line. Here, the program will execute identically to how Stockfish runs with the only addition that the command <strong>test -args</strong> can also be executed. For the <strong>test -args</strong> help menu, simply type <strong>test</strong>. Below are some examples that have been run from the default start position.
+To run the test, compile the program into an executable and run it from the command line. Here, the program will execute identically to how Stockfish runs with the only addition that the command <strong>test -args</strong> can also be executed. For the <strong>test -args</strong> help menu, simply type <strong>test</strong>. Below are some examples that have been run from the default start position. 
 
 #### Help Menu
 ```test```
@@ -115,7 +106,7 @@ current settings:
 #### Run Test for All Functions
 ```test tests```
 ```
-runs an amalgam of the previous functions and various positions
+runs an amalgam of the previous functions and various positions; this is the recommended command
 ```
 ## Evaluation
 
