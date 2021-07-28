@@ -502,7 +502,7 @@ void Test::log_does_permit_good_move_by_undefending_square()
 	{	
 		Square square = string_to_to_square(item.first);
 
-		cout << "\t\ttesting move: " << item.first << endl;
+		// cout << "\t\ttesting move: " << item.first << endl;
 
 		// the square has to be previously defended
 		// if (!is_square_attacked_by_color(pos, square, color)) continue;
@@ -517,7 +517,7 @@ void Test::log_does_permit_good_move_by_undefending_square()
 			continue;
 		}
 		change_side_to_move(pos, states);
-		cout << "\t\tis previously not under-defended" << endl; 
+		// cout << "\t\tis previously not under-defended" << endl; 
 
 		// // this square has to be now under-defended
 		// string originalFen = pos->fen();

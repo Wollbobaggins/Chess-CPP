@@ -208,11 +208,11 @@ namespace Utilities
 
 		set_position(pos, states, originalFen);
 
-		for (ExtMove move : newCaptures)
+		for (ExtMove capture : newCaptures)
 		{
-			if (captures.contains(move) || from_sq(move) == to_sq(move)) continue;
+			if (captures.contains(capture) || from_sq(capture) == to_sq(move)) continue;
 
-			discoveredAttacks.push_back(move);
+			discoveredAttacks.push_back(capture);
 		}
 
 		return discoveredAttacks;
