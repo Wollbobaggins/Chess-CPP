@@ -313,9 +313,11 @@ void Test::log_best_moves()
 
 	for (pair<string, int> item : moveEvaluations)
 	{
-		if (n-- == 0) break;
+		if (n == 0) break;
 
 		cout << "\t" << item.first << ": " << int_to_string_evaluation(item.second) << endl;
+
+		n--;
 	}
 
 	if (n != 0) cout << "\tno more moves found" << endl;
