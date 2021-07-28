@@ -12,6 +12,7 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [x] (3) is it pinned
 - [x] (4) is it hanging
 - [x] (5) how many legal moves are there for all the pieces it can capture
+- [ ] (+) is it relatively pinned
 
 #### Position function ideas
 - [x] (1) get a vector of the best N moves from the position (using an engine)

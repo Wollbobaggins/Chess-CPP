@@ -105,6 +105,21 @@ namespace Utilities
 		else return to_string(eval) + " centipawns";
 	}
 
+	Square string_to_from_square(string& str)
+	{
+		if (str.size() != 4) return SQ_NONE;
+
+		string squareString = str.substr(0, 1) + str.substr(1, 1);
+		return string_to_square(squareString);
+	}
+
+	Square string_to_to_square(string& str)
+	{
+		if (str.size() != 4) return SQ_NONE;
+		string squareString = str.substr(2, 1) + str.substr(3, 1);
+		return string_to_square(squareString);
+	}
+
 #pragma endregion
 
 #pragma region Chess Utility Functions
@@ -173,15 +188,9 @@ namespace Utilities
 		return !isDefended && isAttacked;
 	}
 
-	bool is_square_under_defended(Position* pos, Square square, Color color)
+	bool is_move_defended_against(Position* pos, Move move)
 	{
-		// TODO: write this function
-
-		// count how many attackers there are vs defenders
-
-		// return true if there are more attackers than defenders
-
-		return false;
+		return !pos->see_ge(move, VALUE_ZERO);
 	}
 
 	vector<ExtMove> get_discovered_attacks_after_move(
@@ -205,7 +214,7 @@ namespace Utilities
 
 			discoveredAttacks.push_back(move);
 		}
-		
+
 		return discoveredAttacks;
 	}
 

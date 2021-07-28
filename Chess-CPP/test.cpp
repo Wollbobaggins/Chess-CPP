@@ -204,7 +204,8 @@ void Test::log_legal_moves_for_capturable_pieces()
 		return;
 	}
 
-	cout << "logging legal moves for capturable pieces" << endl;
+	// FIXME: do not log if there are no moves
+	cout << "logging legal moves for capturable pieces" << endl; 
 
 	MoveList legalMoves = MoveList<LEGAL>(*pos);
 	MoveList captures = MoveList<CAPTURES>(*pos);
@@ -348,6 +349,9 @@ void Test::log_move_centipawn_loss()
 	if (loss == 0) cout << "no centipawn loss, bestmove found by engine" << endl;
 	else if (abs(loss) >= VALUE_INFINITE)  cout << "massive centipawn loss, missed mate!" << endl;
 	else cout << "centipawn loss of " << loss << endl;
+
+	// FIXME: centipawn loss does not always output checkmate when lost
+	// FIXME: change cout given if it's a good mate or a bad mate
 }
 
 void Test::log_move_is_hanging_capture()
@@ -372,7 +376,7 @@ void Test::log_is_winning_static_exchange_evaluation()
 		return;
 	}
 
-	Value threshold = PawnValueMg;
+	Value threshold;
 	if (pos->see_ge(move, threshold))
 	{
 		cout << "yes, according to Static Exchange Evaluation, this is a winning capture" << endl;
@@ -488,16 +492,59 @@ void Test::log_does_permit_good_move_by_undefending_square()
 		return;
 	}
 
-	Move token_move = UCI::to_move(*pos, token);
+	Color color = pos->side_to_move();
+	Move tokenMove = UCI::to_move(*pos, token);
 
 	vector<pair<string, int>> permitted_good_moves = get_permitted_good_moves(
-		pos, states, moveEvaluations, permitCentipawnLoss, token_move);
+		pos, states, moveEvaluations, permitCentipawnLoss, tokenMove);
 
 	for (pair<string, int> item : permitted_good_moves)
-	{
-		// if ()
+	{	
+		Square square = string_to_to_square(item.first);
 
-		// cout << "\t" << item.first << ": " << int_to_string_evaluation(-item.second) << endl;
+		cout << "\t\ttesting move: " << item.first << endl;
+
+		// the square has to be previously defended
+		// if (!is_square_attacked_by_color(pos, square, color)) continue;
+		// cout << "\t\tis previously defended by a piece" << endl;
+
+		// the square can't already be under-defended
+		change_side_to_move(pos, states);
+		Move move = UCI::to_move(*pos, item.first);
+		if (!is_move_defended_against(pos, move))
+		{
+			change_side_to_move(pos, states);
+			continue;
+		}
+		change_side_to_move(pos, states);
+		cout << "\t\tis previously not under-defended" << endl; 
+
+		// // this square has to be now under-defended
+		// string originalFen = pos->fen();
+		// make_move(pos, states, tokenMove);
+		// if (is_move_defended_against(pos, move))
+		// {
+		// 	set_position(pos, states, originalFen);
+		// 	continue;
+		// }
+		// cout << "\t\tis now under-defended" << endl; 
+
+		// does this allowed move create discovered attacks? if so, this move might not necessarily
+		// be good because of the undefended square, but rather because of the discovery
+		// Move allowedMove = UCI::to_move(*pos, item.first);
+		// vector<ExtMove> discoveredAttacks = 
+		// 	get_discovered_attacks_after_move(pos, states, allowedMove);
+
+		// set_position(pos, states, originalFen);
+
+		if (!foundMove)
+		{
+			foundMove = true;
+			cout << "yes, this move permits the following good moves:" << endl;
+		}
+
+		cout << "\t" << item.first << " after " << square_to_string(square);
+		cout << " is undefended" << endl;
 	}
 
 
@@ -572,6 +619,8 @@ void Test::log_is_move_discovered_attack()
 	{
 		cout << "\t" << move_to_string(move) << endl;
 	}
+
+	// FIXME: discovered attacks include original piece
 }
 
 #pragma endregion
