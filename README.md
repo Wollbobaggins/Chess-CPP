@@ -12,7 +12,6 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [x] (3) is it pinned
 - [x] (4) is it hanging
 - [x] (5) how many legal moves are there for all the pieces it can capture
-- [ ] (+) is it relatively pinned
 
 #### Position function ideas
 - [x] (1) get a vector of the best N moves from the position (using an engine)
@@ -24,7 +23,7 @@ Some ideas are suggested below. You won't be able to do all of these things in t
 - [x] (3) is this move a winning capture according to Static Exchange Evaluation? (https://www.chessprogramming.org/Static_Exchange_Evaluation)
 - [x] (4) does this move allow the opponent to make a winning capture according to Static Exchange Evaluation?
 - [x] (5) does this move *permit* the opponent to play a good move?
-- [ ] (6) does this move *permit* the opponent to play a good move, by undefending a specific square?
+- [x] (6) does this move *permit* the opponent to play a good move, by undefending a specific square?
 - [x] (+) does this move create discovered attacks?
 
 ## Execution

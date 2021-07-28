@@ -29,12 +29,14 @@ namespace Utilities
 
 	bool compare_move_evaluations(pair<string, int>& a, pair<string, int>& b)
 	{
+		if (abs(a.second) >= VALUE_INFINITE && abs(b.second) >= VALUE_INFINITE) 
+		{
+			if ((a.second > 0 && b.second > 0) || (a.second < 0 && b.second < 0)) 
+			{
+				return a.second < b.second;
+			}
+		}
 		return a.second > b.second;
-	}
-
-	void sort_move_evaluations(vector<pair<string, int>>& moveEvaluations)
-	{
-		sort(moveEvaluations.begin(), moveEvaluations.end(), compare_move_evaluations);
 	}
 
 	string get_next_word(string& text, int& index)
@@ -261,7 +263,7 @@ namespace Utilities
 		// restore cout's original buffer
 		cout.rdbuf(oldStringBuffer);
 
-		sort_move_evaluations(moveEvaluations);
+		sort(moveEvaluations.begin(), moveEvaluations.end(), compare_move_evaluations);
 
 		return moveEvaluations;
 	}

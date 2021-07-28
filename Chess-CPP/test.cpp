@@ -460,26 +460,6 @@ void Test::log_does_permit_good_move()
 
 void Test::log_does_permit_good_move_by_undefending_square()
 {
-	/* pseudocode
-
-	does this move permit a good move? no? then return
-
-	get all good moves that were allowed by this bad move
-
-	foreach allowed good move
-		was its to_square previously defended before the bad move was made? no? continue to next move
-
-		was this to_square previously under-defended? yes? continue to next move
-
-		is this square now under-defended? no? continue to next move
-
-		... there should be another check to see if the defense even mattered
-			discovered check?
-			discovery attack?
-
-		success, log move
-	*/
-
 	bool foundMove = false;
 	int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
 
@@ -502,13 +482,7 @@ void Test::log_does_permit_good_move_by_undefending_square()
 	{	
 		Square square = string_to_to_square(item.first);
 
-		// cout << "\t\ttesting move: " << item.first << endl;
-
-		// the square has to be previously defended
-		// if (!is_square_attacked_by_color(pos, square, color)) continue;
-		// cout << "\t\tis previously defended by a piece" << endl;
-
-		// the square can't already be under-defended
+		// the square can't already be under-defended before the move was made
 		change_side_to_move(pos, states);
 		Move move = UCI::to_move(*pos, item.first);
 		if (!is_move_defended_against(pos, move))
@@ -517,25 +491,6 @@ void Test::log_does_permit_good_move_by_undefending_square()
 			continue;
 		}
 		change_side_to_move(pos, states);
-		// cout << "\t\tis previously not under-defended" << endl; 
-
-		// // this square has to be now under-defended
-		// string originalFen = pos->fen();
-		// make_move(pos, states, tokenMove);
-		// if (is_move_defended_against(pos, move))
-		// {
-		// 	set_position(pos, states, originalFen);
-		// 	continue;
-		// }
-		// cout << "\t\tis now under-defended" << endl; 
-
-		// does this allowed move create discovered attacks? if so, this move might not necessarily
-		// be good because of the undefended square, but rather because of the discovery
-		// Move allowedMove = UCI::to_move(*pos, item.first);
-		// vector<ExtMove> discoveredAttacks = 
-		// 	get_discovered_attacks_after_move(pos, states, allowedMove);
-
-		// set_position(pos, states, originalFen);
 
 		if (!foundMove)
 		{
@@ -546,59 +501,6 @@ void Test::log_does_permit_good_move_by_undefending_square()
 		cout << "\t" << item.first << " after " << square_to_string(square);
 		cout << " is undefended" << endl;
 	}
-
-
-
-	// bool foundMove = false;
-	// int permitCentipawnLoss = 200; // HACK: hardcoded permit threshold
-
-	// int loss = get_centipawn_loss(pos, states, token);
-
-	// if (loss < permitCentipawnLoss)
-	// {
-	// 	cout << "no, move does not permit a good move, by undefending a specific square" << endl;
-	// 	return;
-	// }
-
-	// Move move = UCI::to_move(*pos, token);
-	// int cp = get_move_evaluations(pos, states)[0].second;
-
-	// vector<pair<string, int>> moveEvaluations =
-	// 	get_move_evaluations_after_given_move(pos, states, move);
-
-	// for (pair<string, int> item : moveEvaluations)
-	// {
-	// 	if (cp + item.second >= permitCentipawnLoss)
-	// 	{
-	// 		string squareString = item.first.substr(2, 1) + item.first.substr(3, 1);
-	// 		Square square = string_to_square(squareString);
-
-	// 		// the square has to be previously defended
-	// 		if (is_square_attacked_by_color(pos, square, pos->side_to_move())) continue;
-
-	// 		// the square can't already be under-defended
-	// 		if (is_square_under_defended(pos, square, pos->side_to_move())) continue;
-
-	// 		// this square has to be now under-defended
-	// 		string originalFen = pos->fen();
-	// 		Move tokenMove = UCI::to_move(*pos, token);
-	// 		make_move(pos, states, tokenMove);
-	// 		if (is_square_under_defended(pos, square, ~pos->side_to_move()))
-	// 		{
-	// 			set_position(pos, states, originalFen);
-	// 			continue;
-	// 		}
-	// 		set_position(pos, states, originalFen);
-
-	// 		if (!foundMove)
-	// 		{
-	// 			foundMove = true;
-	// 			cout << "yes, this move permits the following good moves:" << endl;
-	// 		}
-
-	// 		cout << "\t" << item.first << " after " << squareString << " is undefended" << endl;
-	// 	}
-	// }
 }
 
 void Test::log_is_move_discovered_attack()
@@ -619,8 +521,6 @@ void Test::log_is_move_discovered_attack()
 	{
 		cout << "\t" << move_to_string(move) << endl;
 	}
-
-	// FIXME: discovered attacks include original piece
 }
 
 #pragma endregion
