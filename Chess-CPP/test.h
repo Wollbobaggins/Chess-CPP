@@ -30,7 +30,7 @@ private:
 	StateListPtr* states;
 	string token;
 
-	int depth = 5; // how deep for the engine to search
+	int depth = 8; // how deep for the engine to search
 	Value threshold = PawnValueMg; // for static exchange evaluation
 	int permitCentipawnLoss = 200; // centipawn permit difference to be classified as good move
 
@@ -69,7 +69,9 @@ private:
 	void run_all_functions(string& pieceToken, string& positionToken, string& moveToken);
 	void run_tests();
 	void test_double_scholars_mate_position();
-
+	void test_pins_and_discovered_attack();
+	void test_defended_with_undefending();
+	void test_undefended_without_undefending();
 
 };
 

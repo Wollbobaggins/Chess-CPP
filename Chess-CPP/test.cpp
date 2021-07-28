@@ -249,8 +249,7 @@ void Test::log_legal_moves_for_capturable_pieces()
 		return;
 	}
 
-	// FIXME: do not log if there are no moves
-	cout << "logging legal moves for capturable pieces" << endl; 
+	bool foundMove = false;
 
 	MoveList legalMoves = MoveList<LEGAL>(*pos);
 	MoveList captures = MoveList<CAPTURES>(*pos);
@@ -261,12 +260,20 @@ void Test::log_legal_moves_for_capturable_pieces()
 	{
 		if (from_sq(move) == square && legalMoves.contains(move))
 		{
+			if (!foundMove)
+			{
+				cout << "logging legal moves for capturable pieces:" << endl; 
+				foundMove = true;
+			}
+
 			token = square_to_string(to_sq(move)); // we can edit token, last time it's used
 			log_piece_legal_moves();
 		}
 	}
 
 	change_side_to_move(pos, states);
+
+	if (!foundMove) cout << "piece cannot capture, no capturable pieces found" << endl;
 }
 
 #pragma endregion
@@ -398,9 +405,6 @@ void Test::log_move_centipawn_loss()
 	if (loss == 0) cout << "no centipawn loss, bestmove found by engine" << endl;
 	else if (abs(loss) >= VALUE_INFINITE)  cout << "massive centipawn loss, missed mate!" << endl;
 	else cout << "centipawn loss of " << loss << endl;
-
-	// FIXME: centipawn loss does not always output checkmate when lost
-	// FIXME: change cout given if it's a good mate or a bad mate
 }
 
 void Test::log_move_is_hanging_capture()
@@ -501,6 +505,7 @@ void Test::log_does_permit_good_move()
 		cout << "\t" << item.first << ": " << int_to_string_evaluation(-item.second) << endl;
 	}
 
+	if (!foundMove) cout << "no, this move does not permit a good move" << endl;
 }
 
 void Test::log_does_permit_good_move_by_undefending_square()
@@ -640,6 +645,12 @@ void Test::run_all_functions(string& pieceToken, string& positionToken, string& 
 void Test::run_tests()
 {
 	test_double_scholars_mate_position();
+
+	test_pins_and_discovered_attack();
+
+	test_defended_with_undefending();
+
+	test_undefended_without_undefending();
 }
 
 void Test::test_double_scholars_mate_position()
@@ -657,5 +668,49 @@ void Test::test_double_scholars_mate_position()
 	run_all_functions(pieceToken, positionToken, moveToken);
 }
 
+void Test::test_pins_and_discovered_attack()
+{
+	string fen = "k2q4/pp6/8/1r1B2p1/3Q4/8/PP6/1KB2r2 w - - 0 1";
+
+	set_position(pos, states, fen);
+
+	cout << *pos << endl;
+
+	string pieceToken = "c1";
+	string positionToken = "5";
+	string moveToken = "d5b7"; 
+
+	run_all_functions(pieceToken, positionToken, moveToken);
+}
+
+void Test::test_defended_with_undefending()
+{
+	string fen = "6R1/8/5b2/7k/3q4/8/PP6/K1Q5 w - - 0 1";
+
+	set_position(pos, states, fen);
+
+	cout << *pos << endl;
+
+	string pieceToken = "b2";
+	string positionToken = "5";
+	string moveToken = "c1f1"; 
+
+	run_all_functions(pieceToken, positionToken, moveToken);
+}
+
+void Test::test_undefended_without_undefending()
+{
+	string fen = "k4r2/pp3p2/1q4p1/3N3p/5Q2/8/PP6/KB6 b - - 0 1";
+
+	set_position(pos, states, fen);
+
+	cout << *pos << endl;
+
+	string pieceToken = "a1";
+	string positionToken = "5";
+	string moveToken = "b6g1"; 
+
+	run_all_functions(pieceToken, positionToken, moveToken);
+}
 
 #pragma endregion

@@ -165,7 +165,6 @@ namespace Utilities
 	{
 		string fen = pos->fen();
 		set_position(pos, states, fen);
-		// (*states) = StateListPtr(new deque<StateInfo>(1)); // HACK: delete this line
 
 		(*states)->emplace_back();
 		pos->do_move(move, (*states)->back());
